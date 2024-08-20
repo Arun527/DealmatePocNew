@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DealmateApi", "DealmateApi\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DealmateUnitTest", "DealmateUnitTest\DealmateUnitTest.csproj", "{89F0239B-C063-429C-8197-5E2FE6F78592}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ui", "ui\ui.csproj", "{A4C030F6-D1A9-49C6-B595-307526EFD74E}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{89F0239B-C063-429C-8197-5E2FE6F78592}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{89F0239B-C063-429C-8197-5E2FE6F78592}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{89F0239B-C063-429C-8197-5E2FE6F78592}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A4C030F6-D1A9-49C6-B595-307526EFD74E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A4C030F6-D1A9-49C6-B595-307526EFD74E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A4C030F6-D1A9-49C6-B595-307526EFD74E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A4C030F6-D1A9-49C6-B595-307526EFD74E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
