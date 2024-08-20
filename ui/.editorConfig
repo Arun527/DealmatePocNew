@@ -1,0 +1,26 @@
+# EditorConfig configuration file
+root = true
+
+# Apply default settings to all files
+[*]
+indent_style = space
+indent_size = 2
+charset = utf-8
+end_of_line = lf
+insert_final_newline = false
+trim_trailing_whitespace = true
+
+# Specific settings for JavaScript and TypeScript files
+[{*.js,*.ts,*.tsx,*.json}]
+indent_style = space
+indent_size = 2
+
+# Specific settings for HTML files
+[*.html]
+indent_style = space
+indent_size = 2
+
+# Specific settings for CSS files
+[*.css]
+indent_style = space
+indent_size = 2
