@@ -1,6 +1,6 @@
 export const loginStyle = {
     loginContainer: {
-        height: "1000vh",
+        height: "100vh",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",

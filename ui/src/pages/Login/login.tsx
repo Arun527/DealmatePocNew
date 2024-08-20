@@ -136,7 +136,7 @@ const Login = () => {
               </div>
             </div>
           </div>
-          <div className="mb-3">
+          <div className="mb-3" style={loginStyle.button}>
             <Button label="Login" icon={PrimeIcons.SIGN_IN} type="submit" />
           </div>
         </form>
