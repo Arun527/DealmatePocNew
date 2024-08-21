@@ -47,11 +47,9 @@ steps:
   displayName: 'Install Node.js'
 - script: |
     rm package-lock.json
-  workingDirectory: 'ui'
-  displayName: 'Remove package-lock.json'
-- script: |
     yarn install --legacy-peer-deps
     yarn add jest-junit --dev
+    yarn add react-scripts --dev
     yarn build
   workingDirectory: 'ui'
   displayName: 'Install and Build UI'
