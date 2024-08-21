@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ConfirmationDialog-Context should match snapshot 1`] = `
+<body>
+  <div>
+    <div />
+  </div>
+</body>
+`;

@@ -158,7 +158,8 @@ const FileUploadComponent = ({
           buttonbar: { style: { padding: "10px" } },
           badge: { root: { style: { display: "none" } } },
           removeButton: { root: { onClick: clearSelectedFile } },
-          fileName: { className: "text-sm" },
+          file: { draggable: draggable },
+          fileName: { className: "text-sm", draggable: draggable },
         }}
         emptyTemplate={messageTemplate(error, emptyMessage)}
       />

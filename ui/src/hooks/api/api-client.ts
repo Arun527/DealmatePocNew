@@ -1,11 +1,12 @@
 import axios from "axios";
-import { environmentalVariable } from "../../common/env-variables";
 import { getData } from "../../common/app-data";
+import { environmentalVariable } from "../../common/env-variables";
 
 const apiClient = axios.create({
   baseURL: environmentalVariable.BASE_URL,
   headers: {
     Authorization: `Bearer ${getData("token")}`,
+    "Content-Type": ["application/json", "multipart/form-data", "text/plain"],
   },
 });
 
