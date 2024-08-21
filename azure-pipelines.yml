@@ -40,9 +40,14 @@ steps:
   displayName: 'Apply EF Core Migrations'
   env:
     PATH: $(PATH):$(Agent.ToolsDirectory)/dotnet/tools
-
+    
+- task: NodeTool@0
+  inputs:
+    versionSpec: '16.x' # Specify the Node.js version
+  displayName: 'Install Node.js'
+  
 - script: |
-    npm install
+    npm install --legacy-peer-deps
     npm run build
   workingDirectory: 'ui'
   displayName: 'Install and Build UI'
