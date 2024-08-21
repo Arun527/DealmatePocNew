@@ -50,7 +50,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "jest",
-    "test:ci": "jest --coverage --reporters=jest-junit --outputFile=ui/test-results/junit.xml"
+    "test:ci": "jest --ci"
     "test:coverage": "jest --coverage --colors",
     "test:update": "jest --updateSnapshot",
     "eject": "react-scripts eject",
