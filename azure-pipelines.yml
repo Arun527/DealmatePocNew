@@ -43,9 +43,12 @@ steps:
     
 - task: NodeTool@0
   inputs:
-    versionSpec: '16.x' # Specify the Node.js version
+    versionSpec: '18.x' # Specify the Node.js version
   displayName: 'Install Node.js'
-  
+- script: |
+    rm package-lock.json
+  workingDirectory: 'ui'
+  displayName: 'Remove package-lock.json'
 - script: |
     yarn install --legacy-peer-deps
     yarn add jest-junit --dev
