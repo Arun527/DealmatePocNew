@@ -38,4 +38,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+// Handle fallback for SPA routes
+app.MapFallbackToFile("index.html");
+
 app.Run();
