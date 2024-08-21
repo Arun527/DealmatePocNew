@@ -21,14 +21,14 @@ namespace DealmateApi.Controllers
             this.repository = repository;
             _logger = logger;   
         }
-        [AllowAnonymous]
+      
         [HttpGet]
         public async Task<IActionResult> List()
         {
             return Ok(await repository.ListAsync());
         }
 
-        [Authorize]
+      
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
@@ -47,7 +47,6 @@ namespace DealmateApi.Controllers
             return Ok(await vehicleRepository.Delete(id));
         }
 
-        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> FileUpload(IFormFile file)
         {
