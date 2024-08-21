@@ -21,7 +21,7 @@ namespace DealmateApi.Controllers
             this.repository = repository;
             _logger = logger;   
         }
-
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> List()
         {
