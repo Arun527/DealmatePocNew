@@ -46,10 +46,7 @@ steps:
     versionSpec: '18.x' # Specify the Node.js version
   displayName: 'Install Node.js'
 - script: |
-    rm package-lock.json
-    yarn install --legacy-peer-deps
-    yarn add jest-junit --dev
-    yarn add react-scripts --dev
+    yarn install 
     yarn build
   workingDirectory: 'ui'
   displayName: 'Install and Build UI'
