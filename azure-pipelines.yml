@@ -52,6 +52,18 @@ steps:
   workingDirectory: 'ui'
   displayName: 'Install and Build UI'
 
+- script: |
+    npm test -- --coverage
+  workingDirectory: 'ui'
+  displayName: 'Run Jest tests'
+
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: 'ui/test-results/junit.xml'
+    failTaskOnFailedTests: true
+  displayName: 'Publish Jest Test Results'
+
 - task: CopyFiles@2
   displayName: 'Move UI Build to Drop Folder'
   inputs:
