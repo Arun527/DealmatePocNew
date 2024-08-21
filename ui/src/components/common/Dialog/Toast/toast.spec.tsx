@@ -16,10 +16,10 @@ const TestComponent: React.FunctionComponent = () => {
 };
 
 describe("Toast-Context", () => {
-  let baseElement, screen, container;
+  let baseElement, screen;
 
   beforeEach(() => {
-    ({ container, baseElement, ...screen } = render(
+    ({ baseElement, ...screen } = render(
       <ToastContextProvider children={<TestComponent />} />,
       { wrapper: TestContextProvider }
     ));
