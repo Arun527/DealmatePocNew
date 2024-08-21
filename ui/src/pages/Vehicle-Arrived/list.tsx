@@ -8,7 +8,7 @@ const ArrivedVehiclePage = () => {
   const { useListVehicle } = useVehicleArrivedApi();
   const { isLoading, data } = useListVehicle();
   const actionMethod = React.useRef<any>(null);
-
+   
   React.useEffect(() => {
     if (data) {
       setArrivedVehicle(data);
