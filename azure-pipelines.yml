@@ -48,6 +48,7 @@ steps:
   
 - script: |
     npm install --force
+    npm install jest-junit --save-dev
     npm run build
   workingDirectory: 'ui'
   displayName: 'Install and Build UI'
