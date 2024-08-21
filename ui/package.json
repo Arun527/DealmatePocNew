@@ -60,6 +60,10 @@
   "eslintConfig": {
     "extends": "react-app"
   },
+  "scripts": {
+    "test": "jest",
+    "test:ci": "jest --coverage --reporters=jest-junit --outputFile=ui/test-results/junit.xml"
+  },
   "browserslist": {
     "production": [
       ">0.2%",
