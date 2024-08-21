@@ -56,12 +56,12 @@ steps:
   workingDirectory: 'ui'
   displayName: 'Run Jest tests'
 
-- task: CopyFiles@2
-  displayName: 'Move UI Build to Drop Folder'
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish UI Artifacts'
   inputs:
-    SourceFolder: 'ui/build'
-    Contents: '**'
-    TargetFolder: '$(Build.ArtifactStagingDirectory)/ui'
+    PathtoPublish: 'ui/build'
+    ArtifactName: 'ui'
+    publishLocation: 'Container'
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifacts'
