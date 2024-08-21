@@ -60,7 +60,7 @@ steps:
 - task: PublishTestResults@2
   inputs:
     testResultsFormat: 'JUnit'
-    testResultsFiles: 'ui/test-results/junit.xml'
+    testResultsFiles: 'ui/src/components/common/Dialog/ConfirmationDialog/confirmation-dialog.spec.tsx/junit.xml'
     failTaskOnFailedTests: true
   displayName: 'Publish Jest Test Results'
 
