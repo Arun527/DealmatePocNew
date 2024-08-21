@@ -67,7 +67,7 @@ describe("ConfirmationDialog-Context", () => {
     const closeIcon = baseElement.querySelectorAll(
       '[data-pc-section="closebuttonicon"]'
     );
-    fireEvent.click(closeIcon[5]);
+    fireEvent.click(closeIcon[0]);
     expect(props.handleAction).toHaveBeenCalledWith("close");
   });
 });
