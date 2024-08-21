@@ -54,7 +54,7 @@ steps:
   displayName: 'Install and Build UI'
 
 - script: |
-    yarn test:ci
+    npm test:ci
     workingDirectory: 'ui'
   displayName: 'Run Jest tests'
 
