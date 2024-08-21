@@ -6,7 +6,7 @@ const apiClient = axios.create({
   baseURL: environmentalVariable.BASE_URL,
   headers: {
     Authorization: `Bearer ${getData("token")}`,
-    "Content-Type": ["application/json", "multipart/form-data", "text/plain"],
+    "Content-Type": ["application/json", "text/plain"],
   },
 });
 

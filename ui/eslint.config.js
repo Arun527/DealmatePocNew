@@ -28,6 +28,7 @@ module.exports = new ESLint({
     rules: {
       "unicorn/filename-case": "off",
       "no-warning-comments": "off",
+      "react-hooks/exhaustive-deps": 0,
       "no-console": "off",
     },
   },

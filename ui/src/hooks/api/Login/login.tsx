@@ -16,7 +16,7 @@ const useLoginApi = () => {
   const useForgotPassword = () => {
     return useMutation<any, Error>(async (data: any) => {
       const response = await apiClient.post(
-        `/api/employee/changePassword?email=${data?.email}&password=${data?.password}`
+        `/api/employee/changepassword?email=${data?.email}&password=${data?.password}`
       );
       return response?.data;
     });

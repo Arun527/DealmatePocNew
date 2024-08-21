@@ -1,19 +1,22 @@
 import React from "react";
 import FileUploadComponent from "../../components/common/FileUpload/file-upload";
 import useDocumentApi from "../../hooks/api/Document/useDocumentApi";
-import { MutateOptions } from "react-query";
+import { MutateOptions, useQueryClient } from "react-query";
 import { useToastContext } from "../../components/common/Dialog/Toast/toast";
+import { VEHICLE_ARRIVED_KEY } from "../../common/query-key";
 
 const SO8 = () => {
   const showToast = useToastContext();
   const { useExcelUpload } = useDocumentApi();
   const { mutate: mutateExcelUpload } = useExcelUpload();
+  const queryClient = useQueryClient();
 
   const callback = () => {
     return {
       onSuccess: (response: any) => {
         console.log("success", response);
         if (response) {
+          queryClient.invalidateQueries({ queryKey: [VEHICLE_ARRIVED_KEY] });
           showToast({
             severity: "success",
             detail: "File Uploaded Successfully",
@@ -22,7 +25,7 @@ const SO8 = () => {
       },
       onError: (error: any) => {
         console.log("error", error);
-        showToast({ severity: "error", detail: error?.message });
+        showToast({ severity: "error", detail: error?.response?.data?.error });
       },
     } as MutateOptions;
   };

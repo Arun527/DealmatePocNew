@@ -65,11 +65,11 @@ function ForgotPassword() {
           severity: "success",
           detail: "Password Changed Successfully",
         });
-        navigate("/dashboard");
+        navigate("/");
       },
       onError: (error: any) => {
         console.log("error", error);
-        showToast({ severity: "error", detail: error?.message });
+        showToast({ severity: "error", detail: error?.response?.data?.error });
       },
     } as MutateOptions;
   };
@@ -77,7 +77,6 @@ function ForgotPassword() {
   const handleSubmit = (e: any) => {
     e?.preventDefault();
     mutateForgotPassword(formData, callback());
-    navigate("/");
   };
 
   return (

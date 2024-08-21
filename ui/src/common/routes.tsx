@@ -18,6 +18,9 @@ const Appsidebar = Loader(
   lazy(() => import("../components/common/Layout/appsidebar"))
 );
 const SO8 = Loader(lazy(() => import("../pages/SO8/so8")));
+const ArrivedVehiclePage = Loader(
+  lazy(() => import("../pages/Vehicle-Arrived/list"))
+);
 
 const routes = [
   { path: "/", element: <Login /> },
@@ -30,6 +33,16 @@ const routes = [
       {
         path: "",
         element: <SO8 />,
+      },
+    ],
+  },
+  {
+    path: "/vehiclearrived",
+    element: <Appsidebar />,
+    children: [
+      {
+        path: "",
+        element: <ArrivedVehiclePage />,
       },
     ],
   },

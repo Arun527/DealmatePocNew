@@ -59,7 +59,7 @@ const Login = () => {
       },
       onError: (error: any) => {
         console.log("error", error);
-        showToast({ severity: "error", detail: error?.message });
+        showToast({ severity: "error", detail: error?.response?.data?.error });
       },
     } as MutateOptions;
   };
