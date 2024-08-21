@@ -54,14 +54,14 @@ steps:
   displayName: 'Install and Build UI'
 
 - script: |
-    npm test -- --coverage --outputFile=ui/test-results/junit.xml --reporters=jest-junit
-  workingDirectory: 'ui'
+    yarn test:ci
+    workingDirectory: 'ui'
   displayName: 'Run Jest tests'
 
 - task: PublishTestResults@2
   inputs:
     testResultsFormat: 'JUnit'
-    testResultsFiles: 'ui/test-results/junit.xml'
+    testResultsFiles: 'ui/jest.config.ts'
     failTaskOnFailedTests: true
   displayName: 'Publish Jest Test Results'
 
