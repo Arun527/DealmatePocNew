@@ -54,7 +54,7 @@ const Login = () => {
         if (response) {
           setData("token", response);
           showToast({ severity: "success", detail: "Login Successfully" });
-          navigate("/vehiclearrived");
+          navigate("/dashboard");
         }
       },
       onError: (error: any) => {
