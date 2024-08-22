@@ -16,7 +16,7 @@ namespace DealmateApi.Controllers
             this.permissionRepository = permissionRepository;
             this.repository = repository;
         }
-
+ 
         [HttpGet]
         public async Task<IActionResult> List()
         {
