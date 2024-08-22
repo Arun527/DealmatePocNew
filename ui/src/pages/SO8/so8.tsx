@@ -1,6 +1,6 @@
 import React from "react";
 import FileUploadComponent from "../../components/common/FileUpload/file-upload";
-import useDocumentApi from "../../hooks/api/Document/useDocumentApi";
+import useDocumentApi from "../../hooks/api/Document/document";
 import { MutateOptions, useQueryClient } from "react-query";
 import { useToastContext } from "../../components/common/Dialog/Toast/toast";
 import { VEHICLE_ARRIVED_KEY } from "../../common/query-key";
@@ -14,7 +14,6 @@ const SO8 = () => {
   const callback = () => {
     return {
       onSuccess: (response: any) => {
-        console.log("success", response);
         if (response) {
           queryClient.invalidateQueries({ queryKey: [VEHICLE_ARRIVED_KEY] });
           showToast({

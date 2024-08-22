@@ -50,7 +50,6 @@ const Login = () => {
   const callback = () => {
     return {
       onSuccess: (response: any) => {
-        console.log("success", response);
         if (response) {
           setData("token", response);
           showToast({ severity: "success", detail: "Login Successfully" });
@@ -68,8 +67,6 @@ const Login = () => {
     e.preventDefault();
     await mutateLogin(formData, callback());
   };
-
-  console.log(formData, fieldErrors);
 
   return (
     <div style={loginStyle.loginContainer}>

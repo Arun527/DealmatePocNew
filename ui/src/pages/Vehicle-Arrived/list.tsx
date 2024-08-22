@@ -1,6 +1,6 @@
 import React from "react";
 import DataTableComponent from "../../components/common/DataTable/data-table";
-import useVehicleArrivedApi from "../../hooks/api/Vehicle-Arrived/vehicle-arrived";
+import useVehicleArrivedApi from "../../hooks/api/PreSale/vehicle-arrived";
 import { actionColumn, columns } from "./column";
 
 const ArrivedVehiclePage = () => {

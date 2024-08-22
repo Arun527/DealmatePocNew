@@ -60,7 +60,6 @@ function ForgotPassword() {
   const callback = () => {
     return {
       onSuccess: (response: any) => {
-        console.log("success", response);
         showToast({
           severity: "success",
           detail: "Password Changed Successfully",

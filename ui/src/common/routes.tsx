@@ -46,6 +46,16 @@ const routes = [
       },
     ],
   },
+  {
+    path: "/openingstockadd",
+    element: <Appsidebar />,
+    children: [
+      {
+        path: "",
+        element: <SO8 />,
+      },
+    ],
+  },
 ];
 
 export default routes;

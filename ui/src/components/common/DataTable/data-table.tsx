@@ -1,6 +1,6 @@
 import { FilterMatchMode } from "primereact/api";
 import { Card } from "primereact/card";
-import { Column } from "primereact/column";
+import { Column, ColumnProps } from "primereact/column";
 import { DataTable, DataTableValueArray } from "primereact/datatable";
 import { Dialog } from "primereact/dialog";
 import { Dropdown } from "primereact/dropdown";
@@ -9,7 +9,7 @@ import CustomHeaderComponent from "./custom-header-component";
 
 interface Props {
   rowData?: any[];
-  cols?: any[];
+  cols?: ColumnProps[];
   actionTemplate?: (rowData: any) => JSX.Element;
   title?: string;
   showAdd?: boolean;
@@ -48,7 +48,7 @@ const DataTableComponent: React.FC<Props> = ({
   groupByFields,
   rowGroupMode = "rowspan",
 }) => {
-  const [column, setColumn] = React.useState<any[] | undefined>(cols);
+  const [column, setColumn] = React.useState<ColumnProps[] | undefined>(cols);
   const [openAction, setOpenAction] = React.useState(false);
   const [editRows, setEditRows] = React.useState();
   const [selectedRow, setSelectedRow] = React.useState<DataTableValueArray>([]);
@@ -66,7 +66,6 @@ const DataTableComponent: React.FC<Props> = ({
 
   const handleRowAction = (action, row) => {
     if (action === "edit") {
-      console.log("edit", row, action);
       setEditRows(row);
       setOpenAction(true);
     }
@@ -183,15 +182,7 @@ const DataTableComponent: React.FC<Props> = ({
           />
         )}
         {column?.map((col) => (
-          <Column
-            key={col.field}
-            field={col.field}
-            header={col.header}
-            body={col.field === "action" ? actionTemplate : col.body}
-            sortable={col.sortable}
-            hidden={col.hidden}
-            exportable={col.exportable}
-          />
+          <Column {...col} />
         ))}
       </DataTable>
 

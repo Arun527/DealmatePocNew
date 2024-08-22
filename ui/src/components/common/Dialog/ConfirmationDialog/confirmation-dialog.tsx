@@ -29,9 +29,8 @@ const ConfirmationDialog = ({
     setOnOpen(open);
   }, [open]);
 
-  const handleMaskClick = (e: React.MouseEvent<HTMLElement>) => {
+  const handleOutSideClick = (e: React.MouseEvent<HTMLElement>) => {
     const element = e.target as HTMLElement;
-    // Check if the click was on the mask, indicating an outside click
     if (element.dataset?.pcSection === "mask" && outSideClick) {
       handleAction("close");
     }
@@ -43,7 +42,7 @@ const ConfirmationDialog = ({
         visible={onOpen}
         header={content?.header}
         message={content?.text}
-        onMaskClick={handleMaskClick}
+        onMaskClick={handleOutSideClick}
         pt={{
           closeButton: { onClick: () => handleAction("close") },
           footer: { style: confirmationDialogStyle.footer },

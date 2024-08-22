@@ -46,21 +46,22 @@ export const columns = [
   },
 ] as ColumnProps[];
 
-export const actionColumn = (handleRowAction) => [
-  {
-    field: "actions",
-    header: "Actions",
-    exportable: false,
-    headerStyle: { width: "10%", minWidth: "8rem" },
-    bodyStyle: { textAlign: "center" },
-    body: (data) => (
-      <button
-        type="button"
-        className="btn btn-primary btn-sm"
-        onClick={() => handleRowAction("edit", data)}
-      >
-        Edit
-      </button>
-    ),
-  },
-];
+export const actionColumn = (handleRowAction) =>
+  [
+    {
+      field: "actions",
+      header: "Actions",
+      exportable: false,
+      headerStyle: { width: "10%", minWidth: "8rem" },
+      bodyStyle: { textAlign: "center" },
+      body: (data) => (
+        <button
+          type="button"
+          className="btn btn-primary btn-sm"
+          onClick={() => handleRowAction("edit", data)}
+        >
+          Edit
+        </button>
+      ),
+    },
+  ] as ColumnProps[];
