@@ -17,5 +17,6 @@ public class Vehicle
     public double? Mileage { get; set; }
     public string? FuelType { get; set; }
     public DateTime? ManufactureDate { get; set; }
+    public TimeSpan? Active { get; set; }
 
 }
