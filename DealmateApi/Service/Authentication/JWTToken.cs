@@ -23,7 +23,7 @@ public class JWTToken
             issuer: configuration["Jwt:Issuer"],
             audience: configuration["Jwt:Audience"],
             claims: employeeClaims,
-            expires: DateTime.Now.AddDays(5),
+            expires: DateTime.Now.AddDays(1),
             signingCredentials: credentials);
 
         return new JwtSecurityTokenHandler().WriteToken(token);

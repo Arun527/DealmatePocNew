@@ -2,7 +2,6 @@
 using DealmateApi.Domain.EntityFilters;
 using DealmateApi.Infrastructure.Interfaces;
 using DealmateApi.Service.Common;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DealmateApi.Controllers
@@ -13,14 +12,11 @@ namespace DealmateApi.Controllers
     {
         private readonly IVehicleRepository vehicleRepository;       
         private readonly IRepository<Vehicle> repository;
-        private readonly ILogger<VehicleController> _logger;
 
-        public VehicleController(IVehicleRepository vehicleRepository, IRepository<Vehicle> repository
-            ,ILogger<VehicleController> logger)
+        public VehicleController(IVehicleRepository vehicleRepository, IRepository<Vehicle> repository)
         {
             this.vehicleRepository = vehicleRepository;
             this.repository = repository;
-            _logger = logger;   
         }
 
         [HttpPost]
@@ -51,7 +47,6 @@ namespace DealmateApi.Controllers
         [HttpPost]
         public async Task<IActionResult> FileUpload(IFormFile file)
         {
-            _logger.LogInformation("Controller received a file with name: {FileName}, size: {FileSize} bytes", file.FileName, file.Length);
             return Ok(await vehicleRepository.ExcelUpload(file));
         }
     }

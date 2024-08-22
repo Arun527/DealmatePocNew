@@ -8,6 +8,7 @@ namespace DealmateApi.Service.Common;
 
 public class Repository<T> : IRepository<T> where T : class
 {
+    private const int DefaultMaxResults = 100;
     protected readonly ApplicationDbContext _context;
     private IQueryable<T> _query;
     private readonly IEnforcer enforcer;
@@ -31,7 +32,7 @@ public class Repository<T> : IRepository<T> where T : class
         {
             query = query.Include(includeProperty);
         }
-        return await query.ToListAsync();
+        return await query.Take(DefaultMaxResults).ToListAsync();
     }
     public async Task<List<T>> Test(Expression<Func<T, bool>> predicate)
     {

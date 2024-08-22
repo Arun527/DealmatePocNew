@@ -9,43 +9,25 @@ namespace DealmateApi.Service.ExcelProcess;
 public class ExcelService : IExcelService
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly ILogger<ExcelService> _logger;
 
-    public ExcelService(IHttpContextAccessor httpContextAccessor, ILogger<ExcelService> _logger) 
+    public ExcelService(IHttpContextAccessor httpContextAccessor) 
     { 
         _httpContextAccessor = httpContextAccessor;
-        this._logger = _logger;
     }
 
     public List<Vehicle> VehicleProcess(IFormFile file)
     {
-        _logger.LogInformation("ProcessData started.");
 
         // Retrieve user claims from the HTTP context
         var userClaims = _httpContextAccessor.HttpContext?.User.Claims;
-        if (userClaims != null && userClaims.Any())
-        {
-            // Log the claims as a list of key-value pairs
-            foreach (var claim in userClaims)
-            {
-                _logger.LogInformation("User claim: {ClaimType} = {ClaimValue}", claim.Type, claim.Value);
-            }
-        }
-        else
-        {
-            _logger.LogWarning("No user claims found.");
-        }
-
+        
         // Retrieve the user's name from the claims
         var name = userClaims?.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
-        _logger.LogInformation("User name: {UserName}", name ?? "Unknown");
 
         // Validate and get the file extension
-        _logger.LogInformation("File upload process started.");
         var fileExtension = (file == null || file.Length == 0)
             ? throw new Exception("No file uploaded.")
             : Path.GetExtension(file.FileName).ToLower();
-        _logger.LogInformation("Uploaded file extension: {FileExtension}", fileExtension);
 
         using var memoryStream = new MemoryStream();
         file.CopyTo(memoryStream);

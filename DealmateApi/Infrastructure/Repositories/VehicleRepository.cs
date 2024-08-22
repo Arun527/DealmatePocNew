@@ -12,39 +12,26 @@ public class VehicleRepository : IVehicleRepository
 {
     private readonly IRepository<Vehicle> repository;
     private readonly IExcelService excelService;
-    private readonly ILogger<VehicleRepository> _logger;
     private readonly VehicleFilterPredicateBuilder _predicateBuilder;
     public VehicleRepository(IRepository<Vehicle> repository, IExcelService excelService,
-        ILogger<VehicleRepository> logger, VehicleFilterPredicateBuilder predicateBuilder)
+        VehicleFilterPredicateBuilder predicateBuilder)
     {
         this.repository = repository;
         this.excelService = excelService;
-        _logger = logger;
         _predicateBuilder = predicateBuilder;
     }
 
     public async Task<IEnumerable<Vehicle>> ExcelUpload(IFormFile file)
     {
-        _logger.LogInformation("Repository received a file with name: {FileName}, size: {FileSize} bytes", file.FileName, file.Length);
-        try
+        var vehicleList = excelService.VehicleProcess(file);
+        var loadNo = vehicleList.First().LoadNo;
+        var existVehicle = await this.repository.FindAsync(x => x.LoadNo == loadNo);
+        if (existVehicle.Count() != 0)
         {
-            // Start processing the file
-            var vehicleList = excelService.VehicleProcess(file);
-            _logger.LogInformation("File processed successfully. Number of vehicles extracted: {VehicleCount}", vehicleList.Count());
-            var loadNo = vehicleList.First().LoadNo;
-            var existVehicle = await this.repository.FindAsync(x => x.LoadNo == loadNo);
-            if (existVehicle.Count() != 0)
-            {
-                throw new ConflictException($"Already the Vehicles LoadNo {loadNo} Uploaded");
-            }
-            return await this.repository.AddRangeAsync(vehicleList);
+            throw new ConflictException($"Already the Vehicles LoadNo {loadNo} Uploaded");
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An error occurred while processing the file: {FileName}", file.FileName);
-            throw; // Optionally, you could rethrow the exception or handle it as needed
-        }
-        
+        return await this.repository.AddRangeAsync(vehicleList);
+
     }
     public async Task<List<Vehicle>> QueryListAsync(VehicleFilter filter)
     {
