@@ -1,5 +1,4 @@
 ﻿namespace DealmateApi.Domain.Aggregates;
-
 public class Vehicle
 {
     public int Id { get; set; }

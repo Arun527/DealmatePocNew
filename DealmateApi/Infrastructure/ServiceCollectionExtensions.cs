@@ -1,4 +1,5 @@
-﻿using DealmateApi.Infrastructure.DB;
+﻿using DealmateApi.Domain.PredicateBuilders;
+using DealmateApi.Infrastructure.DB;
 using DealmateApi.Infrastructure.Interfaces;
 using DealmateApi.Infrastructure.Repositories;
 using DealmateApi.Service.Common;
@@ -79,6 +80,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IEnforcer, EnforcerService>();
         services.AddScoped<IExcelService, ExcelService>();
         services.AddScoped<IVehicleRepository, VehicleRepository>();
+        services.AddScoped<VehicleFilterPredicateBuilder>();
         services.AddControllers(options =>
         {
             options.Filters.Add<HttpResponseExceptionFilter>(); // Add the custom exception filter

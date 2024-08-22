@@ -24,6 +24,22 @@ public class Repository<T> : IRepository<T> where T : class
             _query = _query.Include(includeProperty);
         }
     }
+    public async Task<List<T>> QueryListAsync(IQueryable<T> query)
+    {
+        var includeProperties = GetIncludeProperties(typeof(T));
+        foreach (var includeProperty in includeProperties)
+        {
+            query = query.Include(includeProperty);
+        }
+        return await query.ToListAsync();
+    }
+    public async Task<List<T>> Test(Expression<Func<T, bool>> predicate)
+    {
+        _query.Where(predicate);
+        return await _query.ToListAsync();
+    }
+    public IQueryable<T> GetQuery()
+        { return _query.AsQueryable(); }
 
     public async Task<T?> GetByIdAsync(int id)
     {

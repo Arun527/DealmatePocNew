@@ -139,7 +139,7 @@ public class ExcelService : IExcelService
         if (string.IsNullOrWhiteSpace(value))
             return null;
         else if (DateTime.TryParse(value.Trim(), out DateTime parsedDateTime))
-            return parsedDateTime;
+            return DateTime.SpecifyKind(parsedDateTime, DateTimeKind.Utc);
         else
             return null;
     }
@@ -165,7 +165,7 @@ public class ExcelService : IExcelService
                 UpdatedOn = DateTime.UtcNow,
                 Key = GetInt(GetCellValue("key")),
                 Mileage = GetDouble(GetCellValue("mileage")),
-                ManufactureDate = DateTime.SpecifyKind(GetDate(GetCellValue("manufacturedate"))?? DateTime.MinValue, DateTimeKind.Utc),
+                ManufactureDate = GetDate(GetCellValue("manufacturedate")),
                 FuelType = GetCellValue("fueltype")
             });
         }

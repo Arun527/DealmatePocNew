@@ -1,4 +1,6 @@
 ﻿using DealmateApi.Domain.Aggregates;
+using DealmateApi.Domain.EntityFilters;
+using DealmateApi.Domain.PredicateBuilders;
 using DealmateApi.Infrastructure.Interfaces;
 using DealmateApi.Service.Common;
 using DealmateApi.Service.ExcelProcess;
@@ -11,11 +13,14 @@ public class VehicleRepository : IVehicleRepository
     private readonly IRepository<Vehicle> repository;
     private readonly IExcelService excelService;
     private readonly ILogger<VehicleRepository> _logger;
-    public VehicleRepository(IRepository<Vehicle> repository, IExcelService excelService, ILogger<VehicleRepository> logger)
+    private readonly VehicleFilterPredicateBuilder _predicateBuilder;
+    public VehicleRepository(IRepository<Vehicle> repository, IExcelService excelService,
+        ILogger<VehicleRepository> logger, VehicleFilterPredicateBuilder predicateBuilder)
     {
         this.repository = repository;
         this.excelService = excelService;
         _logger = logger;
+        _predicateBuilder = predicateBuilder;
     }
 
     public async Task<IEnumerable<Vehicle>> ExcelUpload(IFormFile file)
@@ -41,6 +46,13 @@ public class VehicleRepository : IVehicleRepository
         }
         
     }
+    public async Task<List<Vehicle>> QueryListAsync(VehicleFilter filter)
+    {
+        var predicate = _predicateBuilder.BuildPredicate(filter);
+        var query = repository.GetQuery();
+        query = query.Where(predicate);
+        return await repository.QueryListAsync(query);
+    }
 
     public async Task<Vehicle> Update(Vehicle vehicle)
     {
@@ -57,6 +69,7 @@ public class VehicleRepository : IVehicleRepository
         existvehicle.Mirror = vehicle.Mirror;
         existvehicle.Tools = vehicle.Tools;
         existvehicle.ManualBook = vehicle.ManualBook;
+        existvehicle.Active = vehicle.Active;
         existvehicle = await repository.Update(existvehicle);
         return existvehicle;
     }

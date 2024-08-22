@@ -1,4 +1,5 @@
 ﻿using DealmateApi.Domain.Aggregates;
+using DealmateApi.Domain.EntityFilters;
 using DealmateApi.Infrastructure.Interfaces;
 using DealmateApi.Service.Common;
 using Microsoft.AspNetCore.Authorization;
@@ -21,11 +22,11 @@ namespace DealmateApi.Controllers
             this.repository = repository;
             _logger = logger;   
         }
-      
-        [HttpGet]
-        public async Task<IActionResult> List()
+
+        [HttpPost]
+        public async Task<IActionResult> List([FromBody]VehicleFilter filter)
         {
-            return Ok(await repository.ListAsync());
+            return Ok(await vehicleRepository.QueryListAsync(filter));
         }
 
       
