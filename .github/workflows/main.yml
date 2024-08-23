@@ -38,12 +38,14 @@ jobs:
     - name: DotNet Publish
       run: dotnet publish 'DealmateApi/DealmateApi.csproj' --configuration Release --output ${{ github.workspace }}/api
 
+    - name: Install EF Core Tools Locally
+      run: |
+        dotnet new tool-manifest --force
+        dotnet tool install dotnet-ef --version 8.0.0
+
     - name: Apply EF Core Migrations
       run: |
-        dotnet tool install dotnet-ef --version 8.0.0 --global
         dotnet ef database update --project 'DealmateApi/DealmateApi.csproj' --connection "Host=${{ secrets.DB_HOST }};Database=${{ secrets.DB_NAME }};Username=${{ secrets.DB_USER }};Password=${{ secrets.DB_PASSWORD }};SslMode=${{ secrets.DB_SSLMODE }};"
-      env:
-        PATH: ${{ github.env.PATH }}:${{ runner.tool_cache }}/dotnet/tools
 
     - name: Set up Node.js
       uses: actions/setup-node@v3
