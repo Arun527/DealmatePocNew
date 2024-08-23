@@ -49,13 +49,20 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '20'
+        node-version: '18'  # Use a stable Node.js version
+
+    - name: Install Yarn
+      run: npm install -g yarn@latest
 
     - name: List UI Directory
       run: ls -la ui
 
     - name: Install Dependencies
       run: yarn install --frozen-lockfile --network-timeout 100000 --verbose
+      working-directory: 'ui'
+
+    - name: List Node Modules
+      run: ls -la ui/node_modules
       working-directory: 'ui'
 
     - name: Build UI
