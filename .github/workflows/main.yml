@@ -19,24 +19,24 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3  # Ensure this is the latest version
+      uses: actions/checkout@v3
 
     - name: List files
       run: ls -R  # This will help verify if the .csproj files are present
 
     - name: Set up .NET
-      uses: actions/setup-dotnet@v2  # Ensure this is the latest version
+      uses: actions/setup-dotnet@v2
       with:
         dotnet-version: '8.x'
 
     - name: DotNet Restore
-      run: dotnet restore '**/*.csproj'  # Adjust if necessary
+      run: dotnet restore 'DealmatePocNew.sln'  # Restore using the solution file
 
     - name: DotNet Build
-      run: dotnet build '**/*.csproj' --configuration Release
+      run: dotnet build 'DealmatePocNew.sln' --configuration Release
 
     - name: DotNet Publish
-      run: dotnet publish '**/*.csproj' --configuration Release --output ${{ github.workspace }}/api
+      run: dotnet publish 'DealmateApi/DealmateApi.csproj' --configuration Release --output ${{ github.workspace }}/api
 
     - name: Apply EF Core Migrations
       run: |
@@ -72,4 +72,4 @@ jobs:
         path: ${{ github.workspace }}
     
     - name: DotNet Test
-      run: dotnet test 'DealmateApi/DealmateUnitTest.csproj'  # Adjust the path if necessary
+      run: dotnet test 'DealmateUnitTest/DealmateUnitTest.csproj'
