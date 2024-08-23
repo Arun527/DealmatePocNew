@@ -54,8 +54,8 @@ jobs:
 
     - name: Install and Build UI
       run: |
-        yarn install
-        yarn build
+        yarn install --frozen-lockfile --network-timeout 100000
+        yarn build --verbose
       working-directory: 'ui'
 
     - name: Run Jest tests
