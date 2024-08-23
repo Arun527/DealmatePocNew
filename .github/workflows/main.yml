@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    env:
+      DB_HOST: ${{ secrets.DB_HOST }}
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_SSLMODE: ${{ secrets.DB_SSLMODE }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '8.x'
+
+    - name: DotNet Restore
+      run: dotnet restore '**/*.csproj'
+
+    - name: DotNet Build
+      run: dotnet build '**/*.csproj' --configuration Release
+
+    - name: DotNet Publish
+      run: dotnet publish '**/*.csproj' --configuration Release --output ${{ github.workspace }}/api
+
+    - name: Apply EF Core Migrations
+      run: |
+        dotnet tool install dotnet-ef --version 8.0.0 --global
+        dotnet ef database update --project '$(Build.SourcesDirectory)/DealmateApi/DealmateApi.csproj' --connection "Host=${{ secrets.DB_HOST }};Database=${{ secrets.DB_NAME }};Username=${{ secrets.DB_USER }};Password=${{ secrets.DB_PASSWORD }};SslMode=${{ secrets.DB_SSLMODE }};"
+      env:
+        PATH: ${{ github.env.PATH }}:${{ runner.tool_cache }}/dotnet/tools
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18'
+
+    - name: Install and Build UI
+      run: |
+        yarn install
+        yarn build
+      working-directory: 'ui'
+
+    - name: Run Jest tests
+      run: yarn test:ci
+      working-directory: 'ui'
+
+    - name: Move UI Build to Drop Folder
+      run: |
+        mkdir -p ${{ github.workspace }}/ui
+        cp -R ui/build/* ${{ github.workspace }}/ui/
+
+    - name: Publish Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: drop
+        path: ${{ github.workspace }}
+    
+    - name: DotNet Test
+      run: dotnet test '*/DealmateUnitTest.csproj'
