@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   build:
@@ -19,10 +19,10 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3  # Updated to v3
 
     - name: Set up .NET
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v2  # Updated to v2
       with:
         dotnet-version: '8.x'
 
@@ -43,7 +43,7 @@ jobs:
         PATH: ${{ github.env.PATH }}:${{ runner.tool_cache }}/dotnet/tools
 
     - name: Set up Node.js
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v3  # Updated to v3
       with:
         node-version: '18'
 
