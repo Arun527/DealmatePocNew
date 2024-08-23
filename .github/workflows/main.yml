@@ -21,13 +21,16 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3  # Ensure this is the latest version
 
+    - name: List files
+      run: ls -R  # This will help verify if the .csproj files are present
+
     - name: Set up .NET
       uses: actions/setup-dotnet@v2  # Ensure this is the latest version
       with:
         dotnet-version: '8.x'
 
     - name: DotNet Restore
-      run: dotnet restore '**/*.csproj'
+      run: dotnet restore '**/*.csproj'  # Adjust if necessary
 
     - name: DotNet Build
       run: dotnet build '**/*.csproj' --configuration Release
@@ -38,14 +41,14 @@ jobs:
     - name: Apply EF Core Migrations
       run: |
         dotnet tool install dotnet-ef --version 8.0.0 --global
-        dotnet ef database update --project '$(Build.SourcesDirectory)/DealmateApi/DealmateApi.csproj' --connection "Host=${{ secrets.DB_HOST }};Database=${{ secrets.DB_NAME }};Username=${{ secrets.DB_USER }};Password=${{ secrets.DB_PASSWORD }};SslMode=${{ secrets.DB_SSLMODE }};"
+        dotnet ef database update --project 'DealmateApi/DealmateApi.csproj' --connection "Host=${{ secrets.DB_HOST }};Database=${{ secrets.DB_NAME }};Username=${{ secrets.DB_USER }};Password=${{ secrets.DB_PASSWORD }};SslMode=${{ secrets.DB_SSLMODE }};"
       env:
         PATH: ${{ github.env.PATH }}:${{ runner.tool_cache }}/dotnet/tools
 
     - name: Set up Node.js
-      uses: actions/setup-node@v3  # Make sure to use v3
+      uses: actions/setup-node@v3
       with:
-        node-version: '20'  # Update to a more recent version
+        node-version: '20'
 
     - name: Install and Build UI
       run: |
@@ -69,4 +72,4 @@ jobs:
         path: ${{ github.workspace }}
     
     - name: DotNet Test
-      run: dotnet test '*/DealmateUnitTest.csproj'
+      run: dotnet test 'DealmateApi/DealmateUnitTest.csproj'  # Adjust the path if necessary
