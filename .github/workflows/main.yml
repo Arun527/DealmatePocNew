@@ -7,7 +7,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     env:
@@ -22,7 +21,7 @@ jobs:
       uses: actions/checkout@v3
 
     - name: List files
-      run: ls -R  # This will help verify if the .csproj files are present
+      run: ls -R
 
     - name: Set up .NET
       uses: actions/setup-dotnet@v2
@@ -30,7 +29,7 @@ jobs:
         dotnet-version: '8.x'
 
     - name: DotNet Restore
-      run: dotnet restore 'DealmatePocNew.sln'  # Restore using the solution file
+      run: dotnet restore 'DealmatePocNew.sln'
 
     - name: DotNet Build
       run: dotnet build 'DealmatePocNew.sln' --configuration Release
@@ -52,10 +51,15 @@ jobs:
       with:
         node-version: '20'
 
-    - name: Install and Build UI
-      run: |
-        yarn install --frozen-lockfile --network-timeout 100000
-        yarn build --verbose
+    - name: List UI Directory
+      run: ls -la ui
+
+    - name: Install Dependencies
+      run: yarn install --frozen-lockfile --network-timeout 100000 --verbose
+      working-directory: 'ui'
+
+    - name: Build UI
+      run: yarn build --verbose
       working-directory: 'ui'
 
     - name: Run Jest tests
