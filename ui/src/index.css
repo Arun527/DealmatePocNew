@@ -54,3 +54,7 @@ code {
 .error-text {
   display: unset;
 }
+
+.custom-menubar-container .p-menubar .p-menubar-button {
+  display: none !important;
+}

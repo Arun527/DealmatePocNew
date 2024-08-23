@@ -8,17 +8,17 @@ export const sidebarData = [
       {
         label: "Openning Stock Add",
         icon: "pi pi-fw pi-plus",
-        url: "/openingstockadd",
+        navigator: "/openingstockadd",
       },
       {
         label: "Vehicle Arrived Entry",
         icon: "pi pi-fw pi-download",
-        url: "/vehiclearrived",
+        navigator: "/vehiclearrived",
       },
       {
         label: "Battrey Add",
         icon: "pi pi-fw pi-plus",
-        url: "/batteryadd",
+        navigator: "/batteryadd",
       },
     ],
   },
@@ -29,26 +29,26 @@ export const sidebarData = [
       {
         label: "Vehicle Booking",
         icon: "pi pi-fw pi-refresh",
-        url: "/vehiclebooking",
+        navigator: "/vehiclebooking",
       },
       {
         label: "Vehicle Selection",
         icon: "pi pi-fw pi-repeat",
-        url: "/vehicleselection",
+        navigator: "/vehicleselection",
       },
       {
         label: "Vehicle De-Selection",
         icon: "pi pi-fw pi-book",
-        url: "/vehiclede-selection",
+        navigator: "/vehiclede-selection",
       },
       {
         label: "Accessories & Battery Issue",
         icon: "pi pi-fw pi-search",
-        url: "/accessories&batteryissue",
+        navigator: "/accessories&batteryissue",
       },
     ],
   },
-] as MenuItem[];
+] as any[];
 
 export const headerData = [
   {
