@@ -1,5 +1,5 @@
 trigger:
-- main
+- Pre-Prod
 
 pool:
   vmImage: 'ubuntu-latest'
