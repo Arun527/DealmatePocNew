@@ -52,6 +52,11 @@ steps:
   displayName: 'Install and Build UI'
 
 - script: |
+    env-cmd -f .env.prod react-scripts start
+  workingDirectory: 'ui'
+  displayName: 'Environment Setting'
+
+- script: |
     yarn test:ci
   workingDirectory: 'ui'
   displayName: 'Run Jest tests'
