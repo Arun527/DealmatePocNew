@@ -54,7 +54,7 @@ steps:
   displayName: 'Install and Build UI'
 
 - script: |
-    env-cmd -f .env.prod react-scripts start
+    npx env-cmd -f .env.prod react-scripts start
   workingDirectory: 'ui'
   displayName: 'Environment Setting'
 
