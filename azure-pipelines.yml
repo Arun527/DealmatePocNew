@@ -54,7 +54,7 @@ steps:
   displayName: 'Install and Build UI'
 
 - script: |
-    yarn start:dev
+    npx env-cmd -f .env.dev react-scripts build
   workingDirectory: 'ui'
   displayName: 'Environment Setting'
   timeoutInMinutes: 10
