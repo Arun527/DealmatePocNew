@@ -52,11 +52,14 @@ jobs:
       with:
         node-version: '20'
 
-    - name: Install and Build UI
-      run: |
-        yarn install --frozen-lockfile --network-timeout 100000
-        yarn build --verbose
-      working-directory: 'ui'
+    - name: Install Node.js dependencies
+      run: yarn install --immutable --immutable-cache --check-cache
+
+    - name: Run eslint
+      run: yarn eslint src/ --max-warnings=0
+
+    - name: Run Prettier
+      run: yarn prettier src/ --check
 
     - name: Run Jest tests
       run: yarn test:ci
