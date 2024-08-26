@@ -8,7 +8,6 @@ namespace DealmateApi.Service.Common;
 
 public class Repository<T> : IRepository<T> where T : class
 {
-    private const int DefaultMaxResults = 100;
     protected readonly ApplicationDbContext _context;
     private IQueryable<T> _query;
     private readonly IEnforcer enforcer;
@@ -18,30 +17,14 @@ public class Repository<T> : IRepository<T> where T : class
         _context = context;
         this.enforcer = enforcer;
         _query = _context.Set<T>();
-        var includeProperties = GetIncludeProperties(typeof(T));
+        var includeProperties = IncludeAttribute.GetIncludeProperties(typeof(T));
 
         foreach (var includeProperty in includeProperties)
         {
             _query = _query.Include(includeProperty);
         }
     }
-    public async Task<List<T>> QueryListAsync(IQueryable<T> query)
-    {
-        var includeProperties = GetIncludeProperties(typeof(T));
-        foreach (var includeProperty in includeProperties)
-        {
-            query = query.Include(includeProperty);
-        }
-        return await query.Take(DefaultMaxResults).ToListAsync();
-    }
-    public async Task<List<T>> Test(Expression<Func<T, bool>> predicate)
-    {
-        _query.Where(predicate);
-        return await _query.ToListAsync();
-    }
-    public IQueryable<T> GetQuery()
-        { return _query.AsQueryable(); }
-
+    
     public async Task<T?> GetByIdAsync(int id)
     {
         return await _query.FirstOrDefaultAsync(e => EF.Property<int>(e, "Id") == id);
@@ -116,51 +99,6 @@ public class Repository<T> : IRepository<T> where T : class
     #endregion
 
     #region Methods
-    private static IEnumerable<string> GetIncludeProperties(Type type)
-    {
-        var includeProperties = new List<string>();
-
-        var properties = type.GetProperties()
-            .Where(p => p.GetCustomAttribute<IncludeAttribute>() != null);
-
-        foreach (var property in properties)
-        {
-            includeProperties.Add(property.Name);
-            var propertyType = property.PropertyType;
-
-            // Handle nested properties
-            if (propertyType.IsClass && propertyType != typeof(string))
-            {
-                // Recursively get nested includes
-                includeProperties.AddRange(GetNestedIncludes(propertyType, property.Name));
-            }
-        }
-
-        return includeProperties;
-    }
-
-    private static IEnumerable<string> GetNestedIncludes(Type type, string parentProperty)
-    {
-        var nestedIncludes = new List<string>();
-        var properties = type.GetProperties()
-            .Where(p => p.GetCustomAttribute<IncludeAttribute>() != null);
-
-        foreach (var property in properties)
-        {
-            var propertyName = property.Name;
-            nestedIncludes.Add($"{parentProperty}.{propertyName}");
-
-            var propertyType = property.PropertyType;
-
-            // Handle further nesting
-            if (propertyType.IsClass && propertyType != typeof(string))
-            {
-                nestedIncludes.AddRange(GetNestedIncludes(propertyType, $"{parentProperty}.{propertyName}"));
-            }
-        }
-
-        return nestedIncludes;
-    }
 
     public static object GetPermissionForEntity(Type entityType, string action)
     {

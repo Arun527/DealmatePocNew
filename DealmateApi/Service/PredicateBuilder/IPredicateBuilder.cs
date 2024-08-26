@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace DealmateApi.Service.PredicateBuilder;
 
-public interface IPredicateBuilder<TFilter>
+public interface IPredicateBuilder<TEntity, TFilter> where TEntity : class
 {
-    Expression<Func<Vehicle, bool>> BuildPredicate(TFilter filter);
+    Expression<Func<TEntity, bool>> BuildPredicate(TFilter filter);
 }

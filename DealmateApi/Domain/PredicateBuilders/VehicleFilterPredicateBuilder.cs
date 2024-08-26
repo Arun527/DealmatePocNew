@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 
 namespace DealmateApi.Domain.PredicateBuilders;
 
-public class VehicleFilterPredicateBuilder : IPredicateBuilder<VehicleFilter>
+public class VehicleFilterPredicateBuilder : IPredicateBuilder<Vehicle,VehicleFilter>
 {
     public Expression<Func<Vehicle, bool>> BuildPredicate(VehicleFilter filter)
     {
@@ -17,5 +17,4 @@ public class VehicleFilterPredicateBuilder : IPredicateBuilder<VehicleFilter>
         predicate = FilterExtensions.BuildCombinedPredicate(filter, () => predicate);
         return predicate;
     }
-
 }

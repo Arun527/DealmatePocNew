@@ -28,7 +28,7 @@ public static class FilterExtensions
     public static Expression<Func<TEntity, bool>> CreateDefaultPredicate<TEntity>() where TEntity : class
     {
         var parameter = Expression.Parameter(typeof(TEntity), "v");
-        var body = Expression.Constant(false);
+        var body = Expression.Constant(true);  // Use true to match all records
         return Expression.Lambda<Func<TEntity, bool>>(body, parameter);
     }
 

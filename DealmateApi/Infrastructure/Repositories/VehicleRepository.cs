@@ -1,54 +1,54 @@
 ﻿using DealmateApi.Domain.Aggregates;
-using DealmateApi.Domain.EntityFilters;
-using DealmateApi.Domain.PredicateBuilders;
 using DealmateApi.Infrastructure.Interfaces;
 using DealmateApi.Service.Common;
 using DealmateApi.Service.ExcelProcess;
 using DealmateApi.Service.Exceptions;
+using DealmateApi.Service.Repository;
+using FluentValidation;
 
 namespace DealmateApi.Infrastructure.Repositories;
 
 public class VehicleRepository : IVehicleRepository
 {
-    private readonly IRepository<Vehicle> repository;
+    private readonly IRepository<Vehicle> readRepository;
+    private readonly IWriteRepository<Vehicle> writeRepository;
     private readonly IExcelService excelService;
-    private readonly VehicleFilterPredicateBuilder _predicateBuilder;
-    public VehicleRepository(IRepository<Vehicle> repository, IExcelService excelService,
-        VehicleFilterPredicateBuilder predicateBuilder)
+
+    public VehicleRepository(IRepository<Vehicle> readRepository, IWriteRepository<Vehicle> writeRepository, IExcelService excelService)
     {
-        this.repository = repository;
+        this.readRepository = readRepository;
+        this.writeRepository = writeRepository;
         this.excelService = excelService;
-        _predicateBuilder = predicateBuilder;
     }
 
     public async Task<IEnumerable<Vehicle>> ExcelUpload(IFormFile file)
     {
         var vehicleList = excelService.VehicleProcess(file);
         var loadNo = vehicleList.First().LoadNo;
-        var existVehicle = await this.repository.FindAsync(x => x.LoadNo == loadNo);
+        var existVehicle = await this.readRepository.FindAsync(x => x.LoadNo == loadNo);
         if (existVehicle.Count() != 0)
         {
             throw new ConflictException($"Already the Vehicles LoadNo {loadNo} Uploaded");
         }
-        return await this.repository.AddRangeAsync(vehicleList);
+        return await this.readRepository.AddRangeAsync(vehicleList);
 
     }
-    public async Task<List<Vehicle>> QueryListAsync(VehicleFilter filter)
-    {
-        var predicate = _predicateBuilder.BuildPredicate(filter);
-        var query = repository.GetQuery();
-        query = query.Where(predicate);
-        return await repository.QueryListAsync(query);
-    }
 
-    public async Task<Vehicle> Update(Vehicle vehicle)
+    public async Task<Vehicle> Update(string values, Vehicle vehicle)
     {
-        var existvehicle = await repository.GetByIdAsync(vehicle.Id);
+        var paths = FieldMask.CreateFieldMask(values);
+        new VehicleValidation().Validator(vehicle,paths);
+
+        var existvehicle = await readRepository.GetByIdAsync(vehicle.Id);
         if (existvehicle == null)
         {
             throw new Exception($"The VehicleID {vehicle.Id} not exist");
         }
-        existvehicle.FrameNo = vehicle.FrameNo;
+        if (paths.Contains(nameof(Vehicle.FrameNo)))
+        {
+            existvehicle.FrameNo = vehicle.FrameNo;
+        }
+
         existvehicle.FuelType = vehicle.FuelType;
         existvehicle.Key = vehicle.Key;
         existvehicle.SG = vehicle.SG;
@@ -57,18 +57,78 @@ public class VehicleRepository : IVehicleRepository
         existvehicle.Tools = vehicle.Tools;
         existvehicle.ManualBook = vehicle.ManualBook;
         existvehicle.Active = vehicle.Active;
-        existvehicle = await repository.Update(existvehicle);
+        existvehicle = await writeRepository.Update(existvehicle);
         return existvehicle;
     }
 
     public async Task<Vehicle> Delete(int id)
     {
-        var vehicle = await repository.GetByIdAsync(id);
+        var vehicle = await readRepository.GetByIdAsync(id);
         if (vehicle == null)
         {
             throw new Exception($"The vehicle Id:{id} was not found");
         }
-        vehicle = await repository.Remove(vehicle);
+        vehicle = await writeRepository.Remove(vehicle);
         return vehicle;
     }
+
+    
 }
+
+
+#region Validation
+public class VehicleValidation
+{
+    private class VehicleUpdateValidator : AbstractValidator<Vehicle>
+    {
+        private readonly FieldMask _fieldMask;
+        public VehicleUpdateValidator(FieldMask fieldMask)
+        {
+            _fieldMask = fieldMask;
+            RuleFor(_ => _fieldMask)
+            .NotNull()
+            .SetValidator(new FieldMaskValidator(
+                nameof(Vehicle.LoadNo),
+                nameof(Vehicle.FrameNo)));
+            RuleFor(x => x.Id)
+           .NotEmpty();
+
+            RuleFor(x => x.LoadNo)
+                .NotEmpty()
+                .GreaterThan(0)
+                .When(_ => _fieldMask.Paths.Contains(nameof(Vehicle.LoadNo)));
+
+            RuleFor(x => x.FrameNo)
+                .NotEmpty()
+                .When(_ => _fieldMask.Paths.Contains(nameof(Vehicle.FrameNo)));
+        }
+    }
+    private class VehicleCreateValidator : AbstractValidator<Vehicle>
+    {
+        public VehicleCreateValidator()
+        {
+            RuleFor(vehicle => vehicle.Id)
+                .Empty();
+        }
+    }
+
+    public void Validator(Vehicle vehicle,FieldMask? fieldMask=null)
+    {
+        IValidator<Vehicle> validator;
+        if (fieldMask != null)
+        {
+            validator = new VehicleUpdateValidator(fieldMask);
+        }
+        else
+            validator = new VehicleCreateValidator();
+        var result = validator.Validate(vehicle);
+        if (!result.IsValid)
+        {
+            throw new ValidationException(result.Errors);
+        }
+    }
+
+}
+#endregion
+
+

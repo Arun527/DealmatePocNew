@@ -1,4 +1,6 @@
-﻿using DealmateApi.Domain.PredicateBuilders;
+﻿using DealmateApi.Domain.Aggregates;
+using DealmateApi.Domain.EntityFilters;
+using DealmateApi.Domain.PredicateBuilders;
 using DealmateApi.Infrastructure.DB;
 using DealmateApi.Infrastructure.Interfaces;
 using DealmateApi.Infrastructure.Repositories;
@@ -6,6 +8,8 @@ using DealmateApi.Service.Common;
 using DealmateApi.Service.Enforcer;
 using DealmateApi.Service.ExcelProcess;
 using DealmateApi.Service.Exceptions;
+using DealmateApi.Service.PredicateBuilder;
+using DealmateApi.Service.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -24,6 +28,8 @@ public static class ServiceCollectionExtensions
         options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+        services.AddScoped(typeof(IReadRepository<,>), typeof(ReadRepository<,>));
+        services.AddScoped(typeof(IWriteRepository<>), typeof(WriteRepository<>));
         services.AddHttpContextAccessor();
         services.AddControllers().AddJsonOptions(options =>
         {
@@ -80,11 +86,11 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IEnforcer, EnforcerService>();
         services.AddScoped<IExcelService, ExcelService>();
         services.AddScoped<IVehicleRepository, VehicleRepository>();
-        services.AddScoped<VehicleFilterPredicateBuilder>();
         services.AddControllers(options =>
         {
             options.Filters.Add<HttpResponseExceptionFilter>(); // Add the custom exception filter
         });
+        services.AddScoped<IPredicateBuilder<Vehicle, VehicleFilter>, VehicleFilterPredicateBuilder>();
         return services;
     }
 }
