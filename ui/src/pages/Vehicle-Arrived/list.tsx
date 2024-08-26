@@ -6,9 +6,9 @@ import { actionColumn, columns } from "./column";
 const ArrivedVehiclePage = () => {
   const [arrivedVehicle, setArrivedVehicle] = React.useState([]);
   const { useListVehicle } = useVehicleArrivedApi();
-  const { isLoading, data } = useListVehicle();
+  const { data } = useListVehicle();
   const actionMethod = React.useRef<any>(null);
-   
+
   React.useEffect(() => {
     if (data) {
       setArrivedVehicle(data);
