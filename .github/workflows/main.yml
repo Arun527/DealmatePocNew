@@ -62,11 +62,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - name: Install and Build UI
-        run: |
-          yarn install 
-          yarn build
-          working-directory: 'ui'
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build project
+        run: yarn build
 
       - name: Run Jest tests
         run: yarn test:ci
