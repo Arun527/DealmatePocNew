@@ -45,9 +45,10 @@ steps:
   inputs:
     versionSpec: '18.x' # Specify the Node.js version
   displayName: 'Install Node.js'
+  
 - script: |
     yarn install 
-    yarn add env-cmd
+    yarn global add env-cmd
     yarn build
   workingDirectory: 'ui'
   displayName: 'Install and Build UI'
