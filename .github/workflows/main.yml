@@ -73,15 +73,18 @@ jobs:
           yarn install --frozen-lockfile --network-timeout 300000 || exit 1
           yarn build --verbose || exit 1
         working-directory: './ui'  # Ensure this is correctly set
+        shell: /usr/bin/bash  # Specify the shell to use
 
       - name: Run Jest tests
         run: yarn test:ci
         working-directory: './ui'
+        shell: /usr/bin/bash  # Specify the shell to use
 
       - name: Move UI Build to Drop Folder
         run: |
           mkdir -p ${{ github.workspace }}/ui
           cp -R ui/build/* ${{ github.workspace }}/ui/
+        shell: /usr/bin/bash  # Specify the shell to use
 
       - name: Publish Artifacts
         uses: actions/upload-artifact@v2
