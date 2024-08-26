@@ -1,4 +1,3 @@
-
 name: CI
 
 on:
@@ -53,10 +52,15 @@ jobs:
       with:
         node-version: '20'
 
+    # New step to verify the 'ui' directory exists
+    - name: Verify UI Directory
+      run: ls -la
+      working-directory: 'ui'
+
     - name: Install and Build UI
       run: |
-        yarn install --frozen-lockfile --network-timeout 100000
-        yarn build --verbose
+        yarn install --frozen-lockfile --network-timeout 100000 || (echo "Yarn install failed" && exit 1)
+        yarn build --verbose || (echo "Yarn build failed" && exit 1)
       working-directory: 'ui'
 
     - name: Run Jest tests
@@ -73,6 +77,6 @@ jobs:
       with:
         name: drop
         path: ${{ github.workspace }}
-    
+
     - name: DotNet Test
       run: dotnet test 'DealmateUnitTest/DealmateUnitTest.csproj'
