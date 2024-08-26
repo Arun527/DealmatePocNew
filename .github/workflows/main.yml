@@ -23,6 +23,9 @@ jobs:
       - name: List files
         run: ls -R  # Verify if the .csproj files are present
 
+      - name: List Root Directory
+        run: ls -al  # List all files in the root directory
+
       - name: Set up .NET
         uses: actions/setup-dotnet@v2
         with:
@@ -63,15 +66,17 @@ jobs:
         run: |
           echo "Current working directory:"
           pwd
+          echo "Listing contents of the working directory:"
+          ls -al
           echo "Listing UI directory contents:"
-          ls -al ui
+          ls -al ./ui || echo "UI directory not found!"
           yarn install --frozen-lockfile --network-timeout 300000 || exit 1
           yarn build --verbose || exit 1
-        working-directory: 'ui'
+        working-directory: './ui'  # Ensure this is correctly set
 
       - name: Run Jest tests
         run: yarn test:ci
-        working-directory: 'ui'
+        working-directory: './ui'
 
       - name: Move UI Build to Drop Folder
         run: |
