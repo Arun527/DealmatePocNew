@@ -59,6 +59,10 @@ jobs:
       working-directory: 'ui'
       run: yarn build:prod
 
+    - name: Run ESLint
+      working-directory: 'ui'
+      run: yarn eslint src/ --max-warnings=0
+
     - name: Run Jest tests
       working-directory: 'ui'
       run: yarn test:ci
