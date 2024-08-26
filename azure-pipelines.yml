@@ -53,7 +53,7 @@ steps:
   workingDirectory: 'ui'
   displayName: 'Install and Build UI'
 - script: |
-    yarn build:prod
+    yarn build:preprod
   workingDirectory: 'ui'
   displayName: 'Environment Setting'
   timeoutInMinutes: 10
