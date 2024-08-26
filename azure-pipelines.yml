@@ -47,6 +47,7 @@ steps:
   displayName: 'Install Node.js'
 - script: |
     yarn install 
+    yarn add env-cmd
     yarn build
   workingDirectory: 'ui'
   displayName: 'Install and Build UI'
