@@ -47,10 +47,14 @@ steps:
   displayName: 'Install Node.js'
 - script: |
     yarn install 
-    yarn build:preprod
+    yarn build
   workingDirectory: 'ui'
   displayName: 'Install and Build UI'
-
+- script: |
+    yarn build:prod
+  workingDirectory: 'ui'
+  displayName: 'Environment Setting'
+  timeoutInMinutes: 10
 - script: |
     yarn test:ci
   workingDirectory: 'ui'
