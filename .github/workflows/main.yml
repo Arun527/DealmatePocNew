@@ -62,14 +62,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - name: Install dependencies
-        working-directory: ./ui # Set to the directory where package.json is located
-        run: yarn install
-
-      - name: Build project
-        working-directory: ./ui # Set to the directory where package.json is located
-        run: yarn build
-
+      - name: YARN TEST
+      # You may pin to the exact commit or the version.
+      # uses: Judahh/yarnTest@7a515be24da855fb44268bde3d85743add0a76c5
+        uses: Judahh/yarnTest@0.0.1
+          
       - name: Run Jest tests
         run: yarn test:ci
         working-directory: './ui'
