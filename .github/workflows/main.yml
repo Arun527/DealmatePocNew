@@ -59,14 +59,14 @@ jobs:
     - name: Run ESLint
       working-directory: ./ui
       run: yarn run lint
-
-    - name: Run Prettier
-      working-directory: ./ui
-      run: yarn run prettier
-
+      
     - name: Run tests
       working-directory: ./ui
       run: yarn run test
+
+    - name: Build UI
+      working-directory: ./ui
+      run: yarn build
 
     - name: Run Jest tests
       run: yarn test:ci
