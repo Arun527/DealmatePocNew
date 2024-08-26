@@ -5,16 +5,17 @@ import { Sidebar } from "primereact/sidebar";
 import React from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { headerData, sidebarData } from "../../data/sidebard-data";
+import { clearData } from "../../../common/app-data";
 
 export const drawerWidth = 80;
 export const drawerWidthExpand = 285;
 
 export default function AppSidebar() {
-  const [sidebarVisible, setSidebarVisible] = React.useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
+  const [sidebarVisible, setSidebarVisible] = React.useState(true);
   const [expandedKeys, setExpandedKeys] = React.useState<string[]>([]);
 
-  const location = useLocation();
   const pathname = location.pathname?.split("/")?.pop() || "";
 
   const navigateTo = (path: string) => {
@@ -37,10 +38,19 @@ export default function AppSidebar() {
     },
   ];
 
-  const headerMenuItems = headerData.map((item) => ({
+  const headerMenuItems = headerData.map((item: any) => ({
     ...item,
-    command: () =>
-      item.label === "" ? setSidebarVisible(!sidebarVisible) : null,
+    command: () => {
+      navigateTo(item?.navigator);
+      if (item.label === "") setSidebarVisible(!sidebarVisible);
+    },
+    items: item?.items?.map((subItem: any) => ({
+      ...subItem,
+      command: () => {
+        if (subItem.label === "Logout") clearData();
+        navigateTo(subItem.navigator);
+      },
+    })),
   }));
 
   const sidebarModel = React.useMemo(
@@ -49,7 +59,7 @@ export default function AppSidebar() {
         ...item,
         expanded: expandedKeys.includes(item.id),
         command: () => toggleSidebarMenu(item.id),
-        items: item.items.map((subItem: any) => ({
+        items: item?.items?.map((subItem: any) => ({
           ...subItem,
           command: () => navigateTo(subItem.navigator),
         })),

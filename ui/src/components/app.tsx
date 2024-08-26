@@ -4,7 +4,7 @@ import routes from "../common/routes";
 import { getData } from "../common/app-data";
 
 const App = () => {
-  const location = useLocation();
+  const { pathname } = useLocation();
   const navigate = useNavigate();
   const token = getData("token");
   const loggedIn = Boolean(token);
@@ -12,27 +12,24 @@ const App = () => {
   const previousPathname = React.useRef("");
 
   React.useEffect(() => {
-    if (!loggedIn && location?.pathname === "/") {
-      navigate("/");
+    if (loggedIn) {
+      navigate(pathname == "/" ? "/dashboard" : pathname);
     } else {
-      navigate(
-        loggedIn && location?.pathname === "/"
-          ? "/dashboard"
-          : location.pathname
-      );
+      navigate("/");
     }
-    previousPathname.current = location.pathname;
-  }, [loggedIn, location.pathname]);
+
+    previousPathname.current = pathname;
+  }, [loggedIn, pathname]);
 
   React.useEffect(() => {
     const authPages = ["/", "/signup", "/forgot-password"];
     const root = document.getElementById("root");
-    if (authPages.includes(location?.pathname)) {
+    if (authPages.includes(pathname)) {
       root?.classList.add("auth-page");
     } else {
       root?.classList.remove("auth-page");
     }
-  }, [location?.pathname]);
+  }, [pathname]);
 
   React.useEffect(() => {
     const handleBrowserBackArrow = () => {
@@ -44,7 +41,7 @@ const App = () => {
     return () => {
       window.removeEventListener("popstate", handleBrowserBackArrow);
     };
-  }, [loggedIn, location.pathname]);
+  }, [loggedIn, pathname]);
 
   return <div className="App">{pages}</div>;
 };

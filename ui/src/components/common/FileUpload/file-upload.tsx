@@ -33,23 +33,31 @@ const FileUploadComponent = ({
     draggable = true,
   } = fieldProperties;
   const [selectedFile, setSelectedFile] = React.useState<any>(null);
+  const [isDragging, setIsDragging] = React.useState(false);
   const [error, setError] = React.useState("");
   const ref = React.useRef<FileUpload>(null);
   const nonImgFileXtn = "xlsx,xls,xlsm,xlsb,csv,docx,pdf,txt,rtf,docx,doc,pdf";
 
   const handleSelectFile = (e: FileUploadSelectEvent) => {
     clearSelectedFile();
-    const file = e.files?.[0];
-    if (Boolean(file.name)) {
-      const { isValid, message } = fileValidator(file, accept);
-      setSelectedFile(isValid ? file : null);
-      setError(!isValid ? message : "");
-      if (isValid) {
-        const formData = new FormData();
-        formData.append("file", file);
-        handleFileUpload(formData);
-      }
+    const target = e.originalEvent?.target as HTMLInputElement;
+    const file = e.files?.[0] ?? target?.files?.[0];
+    ref.current?.setFiles([file]);
+    const { isValid, message } = fileValidator(file, accept);
+    setSelectedFile(isValid ? file : null);
+    setError(!isValid ? message : "");
+
+    if (isValid && file) {
+      const formData = new FormData();
+      formData.append("file", file);
+      handleFileUpload(formData);
     }
+  };
+
+  const handleDragAndDrop = (e: any) => {
+    e.preventDefault();
+    setIsDragging(!isDragging);
+    setSelectedFile(e.dataTransfer?.files[0]);
   };
 
   const clearSelectedFile = () => {
@@ -105,9 +113,11 @@ const FileUploadComponent = ({
   const dragDropTemplate = (errorMsg) => {
     return (
       <div
-        className="flex align-items-center flex-column cursor-pointer"
-        onDrop={(e) => setSelectedFile(e.dataTransfer?.files[0])}
-        onDragOver={(e) => e.preventDefault()}
+        className={`flex align-items-center flex-column mr-2 cursor-pointer drag-area ${
+          isDragging ? "highlight" : ""
+        }`}
+        onDrop={handleDragAndDrop}
+        onDragLeave={handleDragAndDrop}
         onClick={() => ref.current?.getInput().click()}
       >
         <i

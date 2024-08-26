@@ -59,7 +59,7 @@ export const headerData = [
   {
     label: "Live Dashboard",
     className: "p-button-text p-button-md text-0",
-    url: "/serviceLivestatus",
+    navigator: "/serviceLivestatus",
   },
   {
     label: "Settings",
@@ -72,12 +72,12 @@ export const headerData = [
       {
         label: "Change Password",
         icon: "pi pi-cog",
-        url: "/forgot-password",
+        navigator: "/forgot-password",
       },
       {
         label: "Logout",
         icon: "pi pi-sign-out",
-        url: "/",
+        navigator: "/",
       },
     ],
   },
