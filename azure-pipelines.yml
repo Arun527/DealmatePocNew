@@ -57,6 +57,7 @@ steps:
     npx env-cmd -f .env.prod react-scripts start
   workingDirectory: 'ui'
   displayName: 'Environment Setting'
+  timeoutInMinutes: 5
 
 - script: |
     yarn test:ci
