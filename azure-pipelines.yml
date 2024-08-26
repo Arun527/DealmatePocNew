@@ -1,85 +1,76 @@
-trigger:
-- main
+name: CI Pipeline
 
-pool:
-  vmImage: 'ubuntu-latest'
-  
-variables:
-  - group: 'DatabaseSettings'
+# Trigger on push to the main branch
+on:
+  push:
+    branches:
+      - main
 
-steps:
-- task: UseDotNet@2
-  inputs:
-    packageType: 'sdk'
-    version: '8.x'
-    installationPath: $(Agent.ToolsDirectory)/dotnet
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-- task: DotNetCoreCLI@2
-  displayName: 'DotNet Restore'
-  inputs:
-    command: 'restore'
-    projects: '**/*.csproj'
+    env:
+      DB_HOST: ${{ secrets.DB_HOST }}
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_SSLMODE: ${{ secrets.DB_SSLMODE }}
 
-- task: DotNetCoreCLI@2
-  displayName: 'DotNet Build'
-  inputs:
-    command: 'build'
-    projects: '**/*.csproj'
-    arguments: '--configuration Release'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-- task: DotNetCoreCLI@2
-  displayName: 'DotNet Publish'
-  inputs:
-    command: 'publish'
-    publishWebProjects: true
-    arguments: '--configuration Release --output $(Build.ArtifactStagingDirectory)/api'
+    - name: Setup .NET Core SDK
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.x'
 
-- script: |
-    dotnet tool install dotnet-ef --version 8.0.0 --global
-    dotnet ef database update  --project '$(Build.SourcesDirectory)/DealmateApi/DealmateApi.csproj' --connection "Host=$(DB_HOST);Database=$(DB_NAME);Username=$(DB_USER);Password=$(DB_PASSWORD);SslMode=$(DB_SSLMODE);"
-  displayName: 'Apply EF Core Migrations'
-  env:
-    PATH: $(PATH):$(Agent.ToolsDirectory)/dotnet/tools
-    
-- task: NodeTool@0
-  inputs:
-    versionSpec: '18.x' # Specify the Node.js version
-  displayName: 'Install Node.js'
-  
-- script: |
-    yarn install 
-    yarn global add env-cmd
-    yarn build
-  workingDirectory: 'ui'
-  displayName: 'Install and Build UI'
+    - name: Restore .NET dependencies
+      run: dotnet restore '**/*.csproj'
 
-- script: |
-    yarn build:prod
-  workingDirectory: 'ui'
-  displayName: 'Environment Setting'
-  timeoutInMinutes: 10
+    - name: Build .NET application
+      run: dotnet build '**/*.csproj' --configuration Release
 
-- script: |
-    yarn test:ci
-  workingDirectory: 'ui'
-  displayName: 'Run Jest tests'
+    - name: Publish .NET application
+      run: dotnet publish '**/*.csproj' --configuration Release --output ${{ github.workspace }}/drop/api
 
-- task: CopyFiles@2
-  displayName: 'Move UI Build to Drop Folder'
-  inputs:
-    SourceFolder: 'ui/build'
-    Contents: '**'
-    TargetFolder: '$(Build.ArtifactStagingDirectory)/ui'
+    - name: Install dotnet-ef tool
+      run: dotnet tool install dotnet-ef --version 8.0.0 --global
 
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifacts'
-  inputs:
-    pathToPublish: '$(Build.ArtifactStagingDirectory)'
-    artifactName: 'drop'
-    publishLocation: 'Container'
-    
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'test'
-    projects: '*/DealmateUnitTest.csproj'
+    - name: Apply EF Core Migrations
+      run: dotnet ef database update --project './DealmateApi/DealmateApi.csproj' --connection "Host=${{ env.DB_HOST }};Database=${{ env.DB_NAME }};Username=${{ env.DB_USER }};Password=${{ env.DB_PASSWORD }};SslMode=${{ env.DB_SSLMODE }};"
+      env:
+        PATH: ${{ env.PATH }}:${{ runner.tool_cache }}/dotnet/tools
 
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18.x'
+
+    - name: Install and Build UI
+      working-directory: 'ui'
+      run: |
+        yarn install
+        yarn global add env-cmd
+        yarn build
+
+    - name: Set Environment for UI
+      working-directory: 'ui'
+      run: yarn build:prod
+
+    - name: Run Jest tests
+      working-directory: 'ui'
+      run: yarn test:ci
+
+    - name: Move UI Build to Drop Folder
+      run: cp -r ui/build/* ${{ github.workspace }}/drop/ui
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: drop
+        path: drop
+
+    - name: Run .NET Unit Tests
+      run: dotnet test './DealmateUnitTest/DealmateUnitTest.csproj'
