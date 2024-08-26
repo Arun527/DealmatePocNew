@@ -52,14 +52,21 @@ jobs:
       with:
         node-version: '20'
 
-    - name: Install Node.js dependencies
-      run: yarn install --immutable --immutable-cache --check-cache
+    - name: Install dependencies
+      working-directory: ./ui
+      run: yarn install
 
-    - name: Run eslint
-      run: yarn eslint src/ --max-warnings=0
+    - name: Run ESLint
+      working-directory: ./ui
+      run: yarn run lint
 
     - name: Run Prettier
-      run: yarn prettier src/ --check
+      working-directory: ./ui
+      run: yarn run prettier
+
+    - name: Run tests
+      working-directory: ./ui
+      run: yarn run test
 
     - name: Run Jest tests
       run: yarn test:ci
