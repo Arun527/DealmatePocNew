@@ -57,9 +57,16 @@ jobs:
       run: ls -la
       working-directory: 'ui'
 
+    # Clean install (removes node_modules and re-installs)
+    - name: Clean Install UI Dependencies
+      run: |
+        rm -rf node_modules
+        yarn install --frozen-lockfile --network-timeout 100000 || (echo "Yarn install failed" && exit 1)
+      working-directory: 'ui'
+
+    # Run the build command with more error information captured
     - name: Install and Build UI
       run: |
-        yarn install --frozen-lockfile --network-timeout 100000 || (echo "Yarn install failed" && exit 1)
         yarn build --verbose || (echo "Yarn build failed" && exit 1)
       working-directory: 'ui'
 
