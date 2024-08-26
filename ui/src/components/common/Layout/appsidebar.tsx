@@ -3,19 +3,34 @@ import { Menubar } from "primereact/menubar";
 import { PanelMenu } from "primereact/panelmenu";
 import { Sidebar } from "primereact/sidebar";
 import React from "react";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { headerData, sidebarData } from "../../data/sidebard-data";
+import { clearData } from "../../../common/app-data";
 
 export const drawerWidth = 80;
 export const drawerWidthExpand = 285;
 
-export default function Appsidebar() {
-  const [visible, setVisible] = React.useState(true);
-
+export default function AppSidebar() {
+  const navigate = useNavigate();
   const location = useLocation();
-  const pathname: any = location.pathname?.split("/")?.pop();
+  const [sidebarVisible, setSidebarVisible] = React.useState(true);
+  const [expandedKeys, setExpandedKeys] = React.useState<string[]>([]);
 
-  const breadcrumbItems = [
+  const pathname = location.pathname?.split("/")?.pop() || "";
+
+  const navigateTo = (path: string) => {
+    if (path) {
+      navigate(path);
+    }
+  };
+
+  const toggleSidebarMenu = (key: string) => {
+    setExpandedKeys((prev) =>
+      prev.includes(key) ? prev.filter((id) => id !== key) : [key]
+    );
+  };
+
+  const breadcrumbNavigation = [
     { label: "Home", url: "/" },
     {
       label: pathname.charAt(0).toUpperCase() + pathname.slice(1),
@@ -23,25 +38,49 @@ export default function Appsidebar() {
     },
   ];
 
-  const menubarItems = headerData.map((item) => ({
+  const headerMenuItems = headerData.map((item: any) => ({
     ...item,
-    command: () => (item.label === "" ? setVisible(!visible) : null),
+    command: () => {
+      navigateTo(item?.navigator);
+      if (item.label === "") setSidebarVisible(!sidebarVisible);
+    },
+    items: item?.items?.map((subItem: any) => ({
+      ...subItem,
+      command: () => {
+        if (subItem.label === "Logout") clearData();
+        navigateTo(subItem.navigator);
+      },
+    })),
   }));
 
+  const sidebarModel = React.useMemo(
+    () =>
+      sidebarData.map((item: any) => ({
+        ...item,
+        expanded: expandedKeys.includes(item.id),
+        command: () => toggleSidebarMenu(item.id),
+        items: item?.items?.map((subItem: any) => ({
+          ...subItem,
+          command: () => navigateTo(subItem.navigator),
+        })),
+      })),
+    [expandedKeys]
+  );
+
   return (
-    <>
+    <React.Fragment>
       <div
         style={{
-          paddingLeft: !visible ? 20 + "px" : drawerWidthExpand + 20 + "px",
+          paddingLeft: !sidebarVisible ? "20px" : `${drawerWidthExpand + 20}px`,
         }}
         className="card custom-menubar-container"
       >
         <Menubar
-          model={menubarItems}
+          model={headerMenuItems}
           style={{ display: "flex", justifyContent: "space-between" }}
         />
         <BreadCrumb
-          model={breadcrumbItems}
+          model={breadcrumbNavigation}
           separatorIcon="pi pi-minus"
           pt={{
             separatorIcon: { style: { rotate: "125deg" } },
@@ -49,7 +88,7 @@ export default function Appsidebar() {
         />
       </div>
       <Sidebar
-        visible={visible}
+        visible={sidebarVisible}
         transitionOptions={{ timeout: 0 }}
         baseZIndex={0}
         showCloseIcon={false}
@@ -59,10 +98,10 @@ export default function Appsidebar() {
           content: { style: { padding: 0 } },
           mask: { style: { animation: "unset", maxWidth: "20%" } },
         }}
-        onHide={() => setVisible(true)}
+        onHide={() => setSidebarVisible(true)}
       >
         <PanelMenu
-          model={sidebarData}
+          model={sidebarModel}
           transitionOptions={{ timeout: 0 }}
           pt={{
             menu: {
@@ -83,12 +122,12 @@ export default function Appsidebar() {
       </Sidebar>
       <div
         style={{
-          paddingLeft: visible ? drawerWidthExpand + 20 + "px" : 20 + "px",
+          paddingLeft: sidebarVisible ? `${drawerWidthExpand + 20}px` : "20px",
           paddingTop: "110px",
         }}
       >
         <Outlet />
       </div>
-    </>
+    </React.Fragment>
   );
 }

@@ -137,7 +137,13 @@ const Signup = () => {
             </div> */}
           </div>
           <div style={loginStyle.button}>
-            <Button label="SignUp" icon={PrimeIcons.USER_PLUS} type="submit" />
+            <Button
+              label="SignUp"
+              loading={false}
+              loadingIcon="pi pi-spin pi-spinner"
+              icon={PrimeIcons.USER_PLUS}
+              type="submit"
+            />
           </div>
         </form>
       </Card>

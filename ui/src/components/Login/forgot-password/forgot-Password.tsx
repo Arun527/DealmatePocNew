@@ -20,7 +20,7 @@ function ForgotPassword() {
   // const [showPassword, setShowPassword] = React.useState<boolean>(false);
   const showToast = useToastContext();
   const { useForgotPassword } = useLoginApi();
-  const { mutate: mutateForgotPassword } = useForgotPassword();
+  const { mutate: mutateForgotPassword, isLoading } = useForgotPassword();
   const navigate = useNavigate();
 
   const handleChange = (e, isValidValue) => {
@@ -166,7 +166,13 @@ function ForgotPassword() {
             </div> */}
           </div>
           <div style={loginStyle.button}>
-            <Button label="Reset" icon={PrimeIcons.COG} type="submit" />
+            <Button
+              label="Reset"
+              loading={isLoading}
+              loadingIcon="pi pi-spin pi-spinner"
+              icon={PrimeIcons.COG}
+              type="submit"
+            />
           </div>
         </form>
       </Card>

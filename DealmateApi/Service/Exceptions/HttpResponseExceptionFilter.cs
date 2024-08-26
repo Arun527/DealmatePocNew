@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using FluentValidationException = FluentValidation.ValidationException;
 
 namespace DealmateApi.Service.Exceptions;
 
@@ -8,25 +9,46 @@ public class HttpResponseExceptionFilter : IExceptionFilter
 {
     public void OnException(ExceptionContext context)
     {
-        if (context.Exception is BadRequestException badRequestEx)
+        var exception = context.Exception;
+        var errorResponse = new
         {
-            context.Result = new ObjectResult(new { error = badRequestEx.Message })
+            message = exception.Message,
+            stackTrace = exception.StackTrace
+        };
+        if (exception is BadRequestException badRequestEx)
+        {
+            context.Result = new ObjectResult(new { error = errorResponse })
             {
                 StatusCode = badRequestEx.StatusCode
             };
             context.ExceptionHandled = true;
         }
-        else if (context.Exception is ConflictException conflictEx)
+        else if (exception is ConflictException conflictEx)
         {
-            context.Result = new ObjectResult(new { error = conflictEx.Message })
+            context.Result = new ObjectResult(new { error = errorResponse })
             {
                 StatusCode = conflictEx.StatusCode
             };
             context.ExceptionHandled = true;
         }
+        else if (exception is FluentValidationException valEx)
+        {
+            var combinedErrors = string.Join(", ",valEx.Errors
+                .Select(e => e.ErrorMessage.TrimEnd('.')).Distinct());
+
+            context.Result = new ObjectResult(new
+            {
+                message = "Validation failed.",
+                errors = combinedErrors
+            })
+            {
+                StatusCode = (int)HttpStatusCode.BadRequest // Use appropriate status code
+            };
+            context.ExceptionHandled = true;
+        }
         else
         {
-            context.Result = new ObjectResult(new { error = "An unexpected error occurred." })
+            context.Result = new ObjectResult(new { error = errorResponse })
             {
                 StatusCode = (int)HttpStatusCode.InternalServerError
             };

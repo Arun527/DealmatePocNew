@@ -1,4 +1,5 @@
-﻿using DealmateApi.Service.Query.Matchers;
+﻿using DealmateApi.Service.Pagination;
+using DealmateApi.Service.Query.Matchers;
 
 namespace DealmateApi.Domain.EntityFilters;
 
@@ -14,4 +15,5 @@ public class VehicleFilter
     public BoolMatch Tools { get; set; } = new BoolMatch(BoolMatch.MatchType.Unspecified); 
     public IEnumerable<DateTimeMatch> ManufactureDate { get; set; } = Enumerable.Empty<DateTimeMatch>();
     public IEnumerable<TimeSpanMatch> Active { get; set; } = Enumerable.Empty<TimeSpanMatch>();
+    public Pagination? Pagination { get; set; } = new();
 }

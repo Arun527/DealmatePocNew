@@ -6,7 +6,7 @@ using DealmateApi.Service.Enforcer;
 
 namespace DealmateApi.Infrastructure.Repositories;
 
-public class EmployeeRepository: IEmployeeRepository
+public class EmployeeRepository : IEmployeeRepository
 {
     private readonly IRepository<Employee> repository;
     private readonly IRepository<Branch> branchRepository;
@@ -14,7 +14,7 @@ public class EmployeeRepository: IEmployeeRepository
     private readonly IConfiguration configuration;
     private readonly IEnforcer enforcer;
     public EmployeeRepository(IRepository<Employee> repository, IRepository<Branch> branchRepository
-        , IRepository<Role> roleRepository, IConfiguration configuration,IEnforcer enforcer)
+        , IRepository<Role> roleRepository, IConfiguration configuration, IEnforcer enforcer)
     {
         this.repository = repository;
         this.branchRepository = branchRepository;
@@ -31,7 +31,7 @@ public class EmployeeRepository: IEmployeeRepository
             throw new Exception($"The Employee Email {employee.Name} was already exist");
         }
         var branch = await branchRepository.GetByIdAsync(employee.BranchId);
-        if(branch == null)
+        if (branch == null)
         {
             throw new Exception($"The BranchID {employee.BranchId} not exist");
         }
@@ -51,9 +51,9 @@ public class EmployeeRepository: IEmployeeRepository
         {
             throw new Exception($"The EmployeeID {employee.Id} not exist");
         }
-        existEmployee.Name = existEmployee.Name != employee.Name? employee.Name: existEmployee.Name;
+        existEmployee.Name = existEmployee.Name != employee.Name ? employee.Name : existEmployee.Name;
         existEmployee.Password = existEmployee.Password != employee.Password ? employee.Password : existEmployee.Password;
-        if(existEmployee.BranchId != employee.BranchId)
+        if (existEmployee.BranchId != employee.BranchId)
         {
             var branch = await branchRepository.GetByIdAsync(employee.BranchId);
             if (branch == null)
@@ -110,7 +110,7 @@ public class EmployeeRepository: IEmployeeRepository
         {
             throw new Exception($"The Email:{email} was not found");
         }
-        user.Password =password;
+        user.Password = password;
         user = await repository.Update(user);
         return user;
     }

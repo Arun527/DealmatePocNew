@@ -19,7 +19,7 @@ const Login = () => {
   const [fieldErrors, setFieldErrors] = React.useState({} as any);
   const showToast = useToastContext();
   const { useLogin } = useLoginApi();
-  const { mutate: mutateLogin } = useLogin();
+  const { mutate: mutateLogin, isLoading } = useLogin();
   const navigate = useNavigate();
 
   const handleChange = (e, isValidValue) => {
@@ -134,7 +134,13 @@ const Login = () => {
             </div>
           </div>
           <div className="mb-3" style={loginStyle.button}>
-            <Button label="Login" icon={PrimeIcons.SIGN_IN} type="submit" />
+            <Button
+              label="Login"
+              loadingIcon="pi pi-spin pi-spinner"
+              loading={isLoading}
+              icon={PrimeIcons.SIGN_IN}
+              type="submit"
+            />
           </div>
         </form>
         <div style={{ textAlign: "center" }}>

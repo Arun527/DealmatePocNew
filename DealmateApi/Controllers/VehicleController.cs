@@ -1,7 +1,7 @@
 ﻿using DealmateApi.Domain.Aggregates;
 using DealmateApi.Domain.EntityFilters;
 using DealmateApi.Infrastructure.Interfaces;
-using DealmateApi.Service.Common;
+using DealmateApi.Service.Repository;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DealmateApi.Controllers
@@ -11,9 +11,9 @@ namespace DealmateApi.Controllers
     public class VehicleController : ControllerBase
     {
         private readonly IVehicleRepository vehicleRepository;       
-        private readonly IRepository<Vehicle> repository;
+        private readonly IReadRepository<Vehicle,VehicleFilter> repository;
 
-        public VehicleController(IVehicleRepository vehicleRepository, IRepository<Vehicle> repository)
+        public VehicleController(IVehicleRepository vehicleRepository, IReadRepository<Vehicle, VehicleFilter> repository)
         {
             this.vehicleRepository = vehicleRepository;
             this.repository = repository;
@@ -22,20 +22,20 @@ namespace DealmateApi.Controllers
         [HttpPost]
         public async Task<IActionResult> List([FromBody]VehicleFilter filter)
         {
-            return Ok(await vehicleRepository.QueryListAsync(filter));
+            return Ok(await repository.QueryListAsync(filter));
         }
 
       
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            return Ok(await repository.GetAsync(id));
+            return Ok(await repository.GetByIdAsync(id));
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update([FromBody] Vehicle vehicle)
+        public async Task<IActionResult> Update([FromQuery]string paths, [FromBody] Vehicle vehicle)
         {
-            return Ok(await vehicleRepository.Update(vehicle));
+            return Ok(await vehicleRepository.Update(paths,vehicle));
         }
 
         [HttpDelete("{id}")]
