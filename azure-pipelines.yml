@@ -47,7 +47,7 @@ steps:
   displayName: 'Install Node.js'
 - script: |
     yarn install 
-    yarn build build:preprod
+    yarn build:preprod
   workingDirectory: 'ui'
   displayName: 'Install and Build UI'
 
