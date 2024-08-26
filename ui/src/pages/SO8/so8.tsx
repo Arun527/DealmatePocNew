@@ -10,7 +10,8 @@ const SO8 = () => {
   const { useExcelUpload } = useDocumentApi();
   const { mutate: mutateExcelUpload } = useExcelUpload();
   const queryClient = useQueryClient();
-
+  const env = process.env.NODE_ENV;
+  console.log(`Environment`,env);
   const callback = () => {
     return {
       onSuccess: (response: any) => {
