@@ -7,7 +7,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     env:
@@ -18,60 +17,72 @@ jobs:
       DB_SSLMODE: ${{ secrets.DB_SSLMODE }}
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: List files
-      run: ls -R  # This will help verify if the .csproj files are present
+      - name: List files
+        run: ls -R  # Verify if the .csproj files are present
 
-    - name: Set up .NET
-      uses: actions/setup-dotnet@v2
-      with:
-        dotnet-version: '8.x'
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '8.x'
 
-    - name: DotNet Restore
-      run: dotnet restore 'DealmatePocNew.sln'  # Restore using the solution file
+      - name: DotNet Restore
+        run: dotnet restore 'DealmatePocNew.sln'  # Restore using the solution file
 
-    - name: DotNet Build
-      run: dotnet build 'DealmatePocNew.sln' --configuration Release
+      - name: DotNet Build
+        run: dotnet build 'DealmatePocNew.sln' --configuration Release
 
-    - name: DotNet Publish
-      run: dotnet publish 'DealmateApi/DealmateApi.csproj' --configuration Release --output ${{ github.workspace }}/api
+      - name: DotNet Publish
+        run: dotnet publish 'DealmateApi/DealmateApi.csproj' --configuration Release --output ${{ github.workspace }}/api
 
-    - name: Install EF Core Tools Locally
-      run: |
-        dotnet new tool-manifest --force
-        dotnet tool install dotnet-ef --version 8.0.0
+      - name: Install EF Core Tools Locally
+        run: |
+          dotnet new tool-manifest --force
+          dotnet tool install dotnet-ef --version 8.0.0
 
-    - name: Apply EF Core Migrations
-      run: |
-        dotnet ef database update --project 'DealmateApi/DealmateApi.csproj' --connection "Host=${{ secrets.DB_HOST }};Database=${{ secrets.DB_NAME }};Username=${{ secrets.DB_USER }};Password=${{ secrets.DB_PASSWORD }};SslMode=${{ secrets.DB_SSLMODE }};"
+      - name: Apply EF Core Migrations
+        run: |
+          dotnet ef database update --project 'DealmateApi/DealmateApi.csproj' --connection "Host=${{ secrets.DB_HOST }};Database=${{ secrets.DB_NAME }};Username=${{ secrets.DB_USER }};Password=${{ secrets.DB_PASSWORD }};SslMode=${{ secrets.DB_SSLMODE }};"
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '20'
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
 
-    - name: Install and Build UI
-      run: |
-        yarn install --frozen-lockfile --network-timeout 100000
-        yarn build --verbose
-      working-directory: 'ui'
+      - name: Cache Node.js modules
+        uses: actions/cache@v3
+        with:
+          path: ui/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('ui/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
-    - name: Run Jest tests
-      run: yarn test:ci
-      working-directory: 'ui'
+      - name: Install and Build UI
+        run: |
+          echo "Current working directory:"
+          pwd
+          echo "Listing UI directory contents:"
+          ls -al ui
+          yarn install --frozen-lockfile --network-timeout 300000 || exit 1
+          yarn build --verbose || exit 1
+        working-directory: 'ui'
 
-    - name: Move UI Build to Drop Folder
-      run: |
-        mkdir -p ${{ github.workspace }}/ui
-        cp -R ui/build/* ${{ github.workspace }}/ui/
+      - name: Run Jest tests
+        run: yarn test:ci
+        working-directory: 'ui'
 
-    - name: Publish Artifacts
-      uses: actions/upload-artifact@v2
-      with:
-        name: drop
-        path: ${{ github.workspace }}
-    
-    - name: DotNet Test
-      run: dotnet test 'DealmateUnitTest/DealmateUnitTest.csproj'
+      - name: Move UI Build to Drop Folder
+        run: |
+          mkdir -p ${{ github.workspace }}/ui
+          cp -R ui/build/* ${{ github.workspace }}/ui/
+
+      - name: Publish Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: drop
+          path: ${{ github.workspace }}
+
+      - name: DotNet Test
+        run: dotnet test 'DealmateUnitTest/DealmateUnitTest.csproj'
