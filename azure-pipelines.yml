@@ -52,7 +52,6 @@ steps:
     yarn build
   workingDirectory: 'ui'
   displayName: 'Install and Build UI'
-
 - script: |
     yarn build:prod
   workingDirectory: 'ui'

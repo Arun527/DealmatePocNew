@@ -10,11 +10,16 @@ const App = () => {
   const loggedIn = Boolean(token);
   const pages = useRoutes(routes);
   const previousPathname = React.useRef("");
+  const authPages = ["/", "/signup", "/forgot-password"];
 
   React.useEffect(() => {
     if (loggedIn) {
       navigate(pathname == "/" ? "/dashboard" : pathname);
     } else {
+      if (authPages.includes(pathname)) {
+        navigate(pathname);
+        return;
+      }
       navigate("/");
     }
 
@@ -22,7 +27,6 @@ const App = () => {
   }, [loggedIn, pathname]);
 
   React.useEffect(() => {
-    const authPages = ["/", "/signup", "/forgot-password"];
     const root = document.getElementById("root");
     if (authPages.includes(pathname)) {
       root?.classList.add("auth-page");

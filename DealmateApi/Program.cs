@@ -1,6 +1,25 @@
 using DealmateApi.Infrastructure;
+using DealmateApi.Infrastructure.DB;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+// Determine the environment
+var environment = builder.Environment.EnvironmentName;
+IConfiguration configuration;
+var configFileName = environment switch
+{
+    "production" => "appsettings.Production.json",
+    "preprod" => "appsettings.Predevelopment.json",
+    "development" => "appsettings.Development.json",
+    _ => "appsettings.json"
+};
+
+configuration = new ConfigurationBuilder()
+    .AddJsonFile(configFileName)
+    .Build();
+// Add services to the container
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
 // Add services to the container.
 builder.Services.AddControllers();
