@@ -57,11 +57,6 @@ steps:
   workingDirectory: 'ui'
   displayName: 'Environment Setting'
   timeoutInMinutes: 10
-- script: |
-    yarn build:prod
-  workingDirectory: 'ui'
-  displayName: 'Environment Setting'
-  timeoutInMinutes: 10
 
 - script: |
     yarn test:ci
