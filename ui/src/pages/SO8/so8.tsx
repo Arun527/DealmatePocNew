@@ -24,7 +24,10 @@ const SO8 = () => {
       },
       onError: (error: any) => {
         console.log("error", error);
-        showToast({ severity: "error", detail: error?.response?.data?.error });
+        showToast({
+          severity: "error",
+          detail: error?.response?.data?.error?.message,
+        });
       },
     } as MutateOptions;
   };
