@@ -10,8 +10,7 @@ const SO8 = () => {
   const { useExcelUpload } = useDocumentApi();
   const { mutate: mutateExcelUpload } = useExcelUpload();
   const queryClient = useQueryClient();
-  const env = process.env.NODE_ENV;
-  console.log(`Environment`,env);
+
   const callback = () => {
     return {
       onSuccess: (response: any) => {
@@ -25,7 +24,10 @@ const SO8 = () => {
       },
       onError: (error: any) => {
         console.log("error", error);
-        showToast({ severity: "error", detail: error?.response?.data?.error });
+        showToast({
+          severity: "error",
+          detail: error?.response?.data?.error?.message,
+        });
       },
     } as MutateOptions;
   };
