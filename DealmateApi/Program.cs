@@ -45,15 +45,8 @@ builder.Services.InfrastructureServices(builder.Configuration);
 
 var app = builder.Build();
 
-if (configuration.GetValue<bool>("Swagger:Enabled"))
-{
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint(configuration["Swagger:Endpoint"], "My API V1");
-        c.RoutePrefix = string.Empty;
-    });
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseCors("AllowSpecificOrigins");
 //app.UseMultiTenant();
