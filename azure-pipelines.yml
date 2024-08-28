@@ -71,6 +71,21 @@ steps:
     Contents: '**'
     TargetFolder: '$(Build.ArtifactStagingDirectory)/api/wwwroot'
 
+# Extract the published ZIP file (assuming it was zipped before publishing)
+- script: |
+    mkdir extracted
+    unzip $(Build.ArtifactStagingDirectory)/DealmateApi.zip -d extracted/
+  displayName: 'Extract ZIP File'
+  condition: succeeded()  # Ensure this runs only if previous steps succeeded
+
+# Copy extracted files to the drop folder
+- task: CopyFiles@2
+  displayName: 'Copy Extracted Files to Drop'
+  inputs:
+    SourceFolder: 'extracted'  # Source folder where files were extracted
+    Contents: '**'              # Copy all files
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/api'  # Destination is the drop folder
+
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifacts'
   inputs:
