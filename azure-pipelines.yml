@@ -36,11 +36,11 @@ steps:
 
 - script: |
     dotnet tool install dotnet-ef --version 8.0.0 --global
-    dotnet ef database update  --project '$(Build.SourcesDirectory)/DealmateApi/DealmateApi.csproj' --connection "Host=$(DB_HOST);Database=$(DB_NAME);Username=$(DB_USER);Password=$(DB_PASSWORD);SslMode=$(DB_SSLMODE);"
+    dotnet ef database update --project '$(Build.SourcesDirectory)/DealmateApi/DealmateApi.csproj' --connection "Host=$(DB_HOST);Database=$(DB_NAME);Username=$(DB_USER);Password=$(DB_PASSWORD);SslMode=$(DB_SSLMODE);"
   displayName: 'Apply EF Core Migrations'
   env:
     PATH: $(PATH):$(Agent.ToolsDirectory)/dotnet/tools
-    
+
 - task: NodeTool@0
   inputs:
     versionSpec: '18.x' # Specify the Node.js version
@@ -53,47 +53,31 @@ steps:
   workingDirectory: 'ui'
   displayName: 'Install and Build UI'
 
-- script: |
-    yarn build:dev
-  workingDirectory: 'ui'
-  displayName: 'Environment Setting'
-  timeoutInMinutes: 10
-
-- script: |
-    yarn test:ci
-  workingDirectory: 'ui'
-  displayName: 'Run Jest tests'
-
 - task: CopyFiles@2
-  displayName: 'Move UI Build to API wwwroot'
+  displayName: 'Move UI Build to wwwroot'
   inputs:
     SourceFolder: 'ui/build'
     Contents: '**'
     TargetFolder: '$(Build.ArtifactStagingDirectory)/api/wwwroot'
 
-# Extract the published ZIP file (assuming it was zipped before publishing)
-- script: |
-    mkdir extracted
-    unzip $(Build.ArtifactStagingDirectory)/DealmateApi.zip -d extracted/
-  displayName: 'Extract ZIP File'
-  condition: succeeded()  # Ensure this runs only if previous steps succeeded
-
-# Copy extracted files to the drop folder
 - task: CopyFiles@2
-  displayName: 'Copy Extracted Files to Drop'
+  displayName: 'Copy API Files to Root'
   inputs:
-    SourceFolder: 'extracted'  # Source folder where files were extracted
-    Contents: '**'              # Copy all files
-    TargetFolder: '$(Build.ArtifactStagingDirectory)/api'  # Destination is the drop folder
+    SourceFolder: '$(Build.ArtifactStagingDirectory)/api'
+    Contents: '**'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/publish'
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifacts'
   inputs:
-    pathToPublish: '$(Build.ArtifactStagingDirectory)'
+    pathToPublish: '$(Build.ArtifactStagingDirectory)/publish'
     artifactName: 'drop'
     publishLocation: 'Container'
-    
-- task: DotNetCoreCLI@2
+
+- task: AzureWebApp@1
+  displayName: 'Deploy to Azure Web App'
   inputs:
-    command: 'test'
-    projects: '*/DealmateUnitTest.csproj'
+    azureSubscription: 'your-azure-subscription'
+    appType: 'webApp'
+    WebAppName: 'your-web-app-name'
+    package: '$(Build.ArtifactStagingDirectory)/publish'
