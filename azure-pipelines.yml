@@ -82,11 +82,3 @@ steps:
   inputs:
     command: 'test'
     projects: '*/DealmateUnitTest.csproj'
-
-- task: AzureWebApp@1
-  displayName: 'Deploy to Azure Web App'
-  inputs:
-    azureSubscription: 'Free Trial'
-    appType: 'webApp'
-    WebAppName: 'DealmateDevelopment-UI'
-    package: '$(Build.ArtifactStagingDirectory)/api'
