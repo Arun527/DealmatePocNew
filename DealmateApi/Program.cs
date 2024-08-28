@@ -45,12 +45,12 @@ builder.Services.InfrastructureServices(builder.Configuration);
 
 var app = builder.Build();
 
-if (Configuration.GetValue<bool>("Swagger:Enabled"))
+if (configuration.GetValue<bool>("Swagger:Enabled"))
 {
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint(Configuration["Swagger:Endpoint"], "My API V1");
+        c.SwaggerEndpoint(configuration["Swagger:Endpoint"], "My API V1");
         c.RoutePrefix = string.Empty;
     });
 }
