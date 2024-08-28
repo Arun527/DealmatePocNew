@@ -73,11 +73,3 @@ steps:
     pathToPublish: '$(Build.ArtifactStagingDirectory)/publish'
     artifactName: 'drop'
     publishLocation: 'Container'
-
-- task: AzureWebApp@1
-  displayName: 'Deploy to Azure Web App'
-  inputs:
-    azureSubscription: 'your-azure-subscription'
-    appType: 'webApp'
-    WebAppName: 'your-web-app-name'
-    package: '$(Build.ArtifactStagingDirectory)/publish'
