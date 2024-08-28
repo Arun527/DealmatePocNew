@@ -65,11 +65,11 @@ steps:
   displayName: 'Run Jest tests'
 
 - task: CopyFiles@2
-  displayName: 'Move UI Build to Drop Folder'
+  displayName: 'Move UI Build to API wwwroot'
   inputs:
     SourceFolder: 'ui/build'
     Contents: '**'
-    TargetFolder: '$(Build.ArtifactStagingDirectory)/ui'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/api/wwwroot'
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifacts'
@@ -82,3 +82,11 @@ steps:
   inputs:
     command: 'test'
     projects: '*/DealmateUnitTest.csproj'
+
+- task: AzureWebApp@1
+  displayName: 'Deploy to Azure Web App'
+  inputs:
+    azureSubscription: 'Free Trial'
+    appType: 'webApp'
+    WebAppName: 'DealmateDevelopment-UI'
+    package: '$(Build.ArtifactStagingDirectory)/api'
