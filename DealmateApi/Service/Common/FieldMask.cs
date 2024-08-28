@@ -11,7 +11,7 @@ public sealed class FieldMask : IEquatable<FieldMask>
 
     private FieldMask(ImmutableArray<string> paths)
     {
-        this.paths = paths;
+        this.paths = paths; 
     }
 
     public FieldMask()
