@@ -5,7 +5,7 @@ import { DataTable, DataTableValueArray } from "primereact/datatable";
 import { Dialog } from "primereact/dialog";
 import { Dropdown } from "primereact/dropdown";
 import React, { ReactElement } from "react";
-import CustomHeaderComponent from "./custom-header-component";
+import CustomToolbar from "./custom-toolbar";
 
 interface Props {
   rowData?: any[];
@@ -18,7 +18,6 @@ interface Props {
   children?: ReactElement;
   actionMethod?;
   sortDetails?: any;
-  setSortDetails?: any;
   idProps?: string;
   rowsPerPage?: number;
   resizeMode?: "fit" | "expand" | undefined;
@@ -26,11 +25,16 @@ interface Props {
   emptyMessage?: string;
   groupByFields?: string[];
   rowGroupMode?: "rowspan" | "subheader";
+  size?: "small" | "large" | "normal" | undefined;
+  isGridLines?: boolean;
+  loading?: boolean;
+  isReOrderColumns?: boolean;
+  showPagination?: boolean;
 }
 
-const DataTableComponent: React.FC<Props> = ({
-  rowData,
-  cols,
+const DataTableComponent = ({
+  rowData = [],
+  cols = [],
   actionTemplate,
   title,
   showAdd = true,
@@ -39,7 +43,6 @@ const DataTableComponent: React.FC<Props> = ({
   children,
   actionMethod,
   sortDetails,
-  setSortDetails,
   idProps,
   rowsPerPage = 10,
   resizeMode = "expand",
@@ -47,12 +50,16 @@ const DataTableComponent: React.FC<Props> = ({
   emptyMessage = "No Records Found",
   groupByFields,
   rowGroupMode = "rowspan",
-}) => {
-  const [column, setColumn] = React.useState<ColumnProps[] | undefined>(cols);
+  size = "small",
+  isGridLines = true,
+  loading,
+  isReOrderColumns = false,
+  showPagination = true,
+}: Props) => {
+  const [column, setColumn] = React.useState<ColumnProps[]>(cols);
   const [openAction, setOpenAction] = React.useState(false);
   const [editRows, setEditRows] = React.useState();
   const [selectedRow, setSelectedRow] = React.useState<DataTableValueArray>([]);
-  const dt = React.useRef<DataTable<any[]>>(null);
   const rowPerPageOption = [5, 10, 25];
   const [filters, setFilters] = React.useState<Record<string, any>>({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -72,13 +79,15 @@ const DataTableComponent: React.FC<Props> = ({
   };
 
   const exportCSV = () => {
-    actionMethod.current?.exportCSV();
+    const selectedRowLength = selectedRow.length;
+    actionMethod?.current?.exportCSV({
+      selectionOnly: Boolean(selectedRowLength),
+    });
   };
 
   const headerTemplate = () => (
-    <CustomHeaderComponent
+    <CustomToolbar
       title={title}
-      rowData={rowData}
       showAdd={showAdd}
       children={children}
       cols={cols}
@@ -137,27 +146,23 @@ const DataTableComponent: React.FC<Props> = ({
   return (
     <Card>
       <DataTable
-        value={rowData || []}
+        dataKey={idProps}
+        value={rowData}
         header={headerTemplate}
-        // stripedRows
-        size="small"
+        size={size}
         ref={actionMethod}
         filters={filters}
-        showGridlines
+        showGridlines={isGridLines}
+        stripedRows
+        loading={loading}
         sortField={sortDetails?.field}
         sortOrder={sortDetails?.order}
-        onSort={(e) => {
-          setSortDetails({
-            field: e.sortField,
-            order: e.sortOrder,
-          });
-        }}
-        dataKey={idProps}
+        columnResizeMode={resizeMode}
+        reorderableColumns={isReOrderColumns}
         selection={selectedRow}
         onSelectionChange={(e) => {
           setSelectedRow(e.value);
         }}
-        columnResizeMode={resizeMode}
         headerColumnGroup={headerGroup ? headerGroup(column) : null}
         className={className}
         resizableColumns
@@ -167,22 +172,27 @@ const DataTableComponent: React.FC<Props> = ({
         rows={rowsPerPage}
         paginatorTemplate={paginatorTemplate}
         paginatorLeft
-        // stateStorage="local" // "local" || "memory"
-        // stateKey={`${title}-local`}
         emptyMessage={emptyMessage}
-        frozenRow={true}
         exportFilename={`${title}`}
         rowGroupMode={rowGroupMode}
         groupRowsBy={groupByFields as any}
+        alwaysShowPaginator={showPagination}
       >
-        {selectionMode && (
+        {
+          // selectionMode details
+          selectionMode && (
+            <Column
+              selectionMode={selectionMode}
+              headerStyle={{ width: "3rem" }}
+            />
+          )
+        }
+        {column?.map((col: any) => (
           <Column
-            selectionMode={selectionMode}
-            headerStyle={{ width: "3rem" }}
+            {...col}
+            body={col.field === "action" ? actionTemplate : col.body}
+            exportable={col.exportable ?? !col.hidden}
           />
-        )}
-        {column?.map((col) => (
-          <Column {...col} />
         ))}
       </DataTable>
 
@@ -191,7 +201,6 @@ const DataTableComponent: React.FC<Props> = ({
         onHide={() => setOpenAction(false)}
         header={`Edit ${title}`}
         style={{ width: "30vw" }}
-        dismissableMask
       >
         {children &&
           React.cloneElement(children, {

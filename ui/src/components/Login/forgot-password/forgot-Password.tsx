@@ -11,7 +11,7 @@ import { loginStyle } from "../../../pages/Login/style";
 import ErrorMessage from "../../common/field-error-message";
 import { PrimeIcons } from "primereact/api";
 import { useToastContext } from "../../common/Dialog/Toast/toast";
-import useLoginApi from "../../../hooks/api/Login/login";
+import useAuthenticationApi from "../../../hooks/api/Login/login";
 import { MutateOptions } from "react-query";
 
 function ForgotPassword() {
@@ -19,7 +19,7 @@ function ForgotPassword() {
   const [fieldErrors, setFieldErrors] = React.useState({} as any);
   // const [showPassword, setShowPassword] = React.useState<boolean>(false);
   const showToast = useToastContext();
-  const { useForgotPassword } = useLoginApi();
+  const { useForgotPassword } = useAuthenticationApi();
   const { mutate: mutateForgotPassword, isLoading } = useForgotPassword();
   const navigate = useNavigate();
 

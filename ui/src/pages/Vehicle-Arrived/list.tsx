@@ -5,8 +5,8 @@ import { actionColumn, columns } from "./column";
 
 const ArrivedVehiclePage = () => {
   const [arrivedVehicle, setArrivedVehicle] = React.useState([]);
-  const { useListVehicle } = useVehicleArrivedApi();
-  const { data } = useListVehicle();
+  const { useListVehicles } = useVehicleArrivedApi();
+  const { data, isLoading } = useListVehicles();
   const actionMethod = React.useRef<any>(null);
 
   React.useEffect(() => {
@@ -26,6 +26,7 @@ const ArrivedVehiclePage = () => {
         cols={[...columns, ...actionColumn(handleRowAction)]}
         title="Arrived Vehicles"
         actionMethod={actionMethod}
+        loading={isLoading}
         idProps="id"
       />
     </React.Fragment>

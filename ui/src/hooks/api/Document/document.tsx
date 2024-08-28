@@ -12,7 +12,7 @@ const client = axios.create({
   },
 });
 
-const useDocumentApi = () => {
+const useDocumentServiceApi = () => {
   const useExcelUpload = () => {
     return useMutation<any, Error>(async (formData: any) => {
       const response = await client.post(`/api/vehicle/fileupload`, formData);
@@ -28,4 +28,4 @@ const useDocumentApi = () => {
   );
 };
 
-export default useDocumentApi;
+export default useDocumentServiceApi;

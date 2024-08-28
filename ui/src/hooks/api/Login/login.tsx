@@ -2,7 +2,7 @@ import React from "react";
 import { useMutation } from "react-query";
 import apiClient from "../api-client";
 
-const useLoginApi = () => {
+const useAuthenticationApi = () => {
   const useLogin = () => {
     return useMutation<any, Error>(async (data: any) => {
       const response = await apiClient.post(
@@ -30,4 +30,4 @@ const useLoginApi = () => {
   );
 };
 
-export default useLoginApi;
+export default useAuthenticationApi;

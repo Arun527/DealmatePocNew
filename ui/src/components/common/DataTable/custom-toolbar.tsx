@@ -17,7 +17,7 @@ interface Props {
   exportCSV?: () => void;
 }
 
-const CustomHeaderComponent: React.FC<Props> = ({
+const CustomToolbar: React.FC<Props> = ({
   title,
   rowData = [],
   showAdd,
@@ -161,4 +161,4 @@ const CustomHeaderComponent: React.FC<Props> = ({
   );
 };
 
-export default CustomHeaderComponent;
+export default CustomToolbar;

@@ -10,7 +10,7 @@ import { setData } from "../../common/app-data";
 import { regexPatterns } from "../../common/constants";
 import { useToastContext } from "../../components/common/Dialog/Toast/toast";
 import ErrorMessage from "../../components/common/field-error-message";
-import useLoginApi from "../../hooks/api/Login/login";
+import useAuthenticationApi from "../../hooks/api/Login/login";
 import { loginStyle } from "./style";
 import { MutateOptions } from "react-query";
 
@@ -18,7 +18,7 @@ const Login = () => {
   const [formData, setFormData] = React.useState({} as any);
   const [fieldErrors, setFieldErrors] = React.useState({} as any);
   const showToast = useToastContext();
-  const { useLogin } = useLoginApi();
+  const { useLogin } = useAuthenticationApi();
   const { mutate: mutateLogin, isLoading } = useLogin();
   const navigate = useNavigate();
 
