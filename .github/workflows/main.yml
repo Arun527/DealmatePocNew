@@ -53,7 +53,7 @@ jobs:
 
     - name: Build UI
       run: yarn build
-      working-directory: ui
+      working-directory: 'DealmateApi/ui'
 
     - name: Set Environment for Production
       run: yarn build:prod
