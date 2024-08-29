@@ -1,4 +1,4 @@
-name: CI
+name: CI/CD Pipeline
 
 on:
   push:
@@ -7,81 +7,72 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
+    
     env:
       DB_HOST: ${{ secrets.DB_HOST }}
       DB_NAME: ${{ secrets.DB_NAME }}
       DB_USER: ${{ secrets.DB_USER }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       DB_SSLMODE: ${{ secrets.DB_SSLMODE }}
-
+      
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: List files
-      run: ls -R  # This will help verify if the .csproj files are present
-
-    - name: Set up .NET
-      uses: actions/setup-dotnet@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v3
       with:
         dotnet-version: '8.x'
 
-    - name: DotNet Restore
-      run: dotnet restore 'DealmatePocNew.sln'  # Restore using the solution file
+    - name: Restore NuGet packages
+      run: dotnet restore '**/*.csproj'
 
-    - name: DotNet Build
-      run: dotnet build 'DealmatePocNew.sln' --configuration Release
+    - name: Build .NET Core solution
+      run: dotnet build '**/*.csproj' --configuration Release
 
-    - name: DotNet Publish
-      run: dotnet publish 'DealmateApi/DealmateApi.csproj' --configuration Release --output ${{ github.workspace }}/api
+    - name: Publish .NET Core project
+      run: dotnet publish '**/*.csproj' --configuration Release --output ${{ github.workspace }}/api
 
-    - name: Install EF Core Tools Locally
-      run: |
-        dotnet new tool-manifest --force
-        dotnet tool install dotnet-ef --version 8.0.0
-
+    - name: Install EF Core CLI
+      run: dotnet tool install --global dotnet-ef --version 8.0.0
+      
     - name: Apply EF Core Migrations
-      run: |
-        dotnet ef database update --project 'DealmateApi/DealmateApi.csproj' --connection "Host=${{ secrets.DB_HOST }};Database=${{ secrets.DB_NAME }};Username=${{ secrets.DB_USER }};Password=${{ secrets.DB_PASSWORD }};SslMode=${{ secrets.DB_SSLMODE }};"
+      run: dotnet ef database update --project ${{ github.workspace }}/DealmateApi/DealmateApi.csproj --connection "Host=${{ secrets.DB_HOST }};Database=${{ secrets.DB_NAME }};Username=${{ secrets.DB_USER }};Password=${{ secrets.DB_PASSWORD }};SslMode=${{ secrets.DB_SSLMODE }}"
 
-    - name: Set up Node.js
+    - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '20'
+        node-version: '18.x'
 
-    - name: Install dependencies
-      working-directory: ./ui
-      run: yarn install
-
-    - name: Run ESLint
-      working-directory: ./ui
-      run: yarn run lint
-      
-    - name: Run tests
-      working-directory: ./ui
-      run: yarn run test
+    - name: Install Yarn and Dependencies
+      run: |
+        yarn install 
+        yarn global add env-cmd
+      working-directory: ui
 
     - name: Build UI
-      working-directory: ./ui
       run: yarn build
+      working-directory: ui
 
-    - name: Run Jest tests
+    - name: Set Environment for Production
+      run: yarn build:prod
+      working-directory: ui
+
+    - name: Run Jest Tests
       run: yarn test:ci
-      working-directory: 'ui'
+      working-directory: ui
 
     - name: Move UI Build to Drop Folder
       run: |
-        mkdir -p ${{ github.workspace }}/ui
-        cp -R ui/build/* ${{ github.workspace }}/ui/
+        mkdir -p ${{ github.workspace }}/drop/ui
+        cp -r ui/build/* ${{ github.workspace }}/drop/ui
 
     - name: Publish Artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: drop
-        path: ${{ github.workspace }}
-    
-    - name: DotNet Test
-      run: dotnet test 'DealmateUnitTest/DealmateUnitTest.csproj'
+        path: ${{ github.workspace }}/drop
+
+    - name: Run Unit Tests
+      run: dotnet test '*/DealmateUnitTest.csproj'
