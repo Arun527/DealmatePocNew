@@ -5,18 +5,11 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 // Determine the environment
 var environment = builder.Environment.EnvironmentName;
-IConfiguration configuration;
-var configFileName = environment switch
-{
-    "production" => "appsettings.Production.json",
-    "preprod" => "appsettings.Predevelopment.json",
-    "development" => "appsettings.Development.json",
-    _ => "appsettings.json"
-};
+// Load the base configuration from appsettings.json
+var configuration = builder.Configuration;
 
-configuration = new ConfigurationBuilder()
-    .AddJsonFile(configFileName)
-    .Build();
+var envConfigSection = configuration.GetSection($"Environments:{environment}");
+builder.Configuration.AddConfiguration(envConfigSection);
 // Add services to the container
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
