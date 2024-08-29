@@ -26,13 +26,13 @@ jobs:
         dotnet-version: '8.x'
 
     - name: Restore NuGet packages
-      run: dotnet restore '**/*.csproj'
+      run: dotnet restore 'DealmatePocNew.sln'  # Restore using the solution file
 
     - name: Build .NET Core solution
-      run: dotnet build '**/*.csproj' --configuration Release
+      run: dotnet build 'DealmatePocNew.sln' --configuration Release
 
     - name: Publish .NET Core project
-      run: dotnet publish '**/*.csproj' --configuration Release --output ${{ github.workspace }}/api
+      run: dotnet publish 'DealmateApi/DealmateApi.csproj' --configuration Release --output ${{ github.workspace }}/api
 
     - name: Install EF Core CLI
       run: dotnet tool install --global dotnet-ef --version 8.0.0
