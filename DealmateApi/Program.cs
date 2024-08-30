@@ -27,11 +27,11 @@ builder.Services.AddControllers();
 builder.Services.AddApplicationInsightsTelemetry();
 builder.Services.AddCors(options =>
 {
+    var allowedOrigins = configuration.GetSection("UiUrl:Url").Value;
     options.AddPolicy("AllowSpecificOrigins", builder =>
     {
         builder
-        .WithOrigins("http://localhost:3000",
-        "https://dealmatedevelopment-ui-gbfpfxeyh4eqhxgr.eastasia-01.azurewebsites.net") // Replace with your client application's URL
+        .WithOrigins("http://localhost:3000",allowedOrigins!) // Replace with your client application's URL
         .AllowAnyHeader()
         .AllowAnyMethod()
         .AllowCredentials(); // Allow credentials
