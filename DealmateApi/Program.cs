@@ -30,8 +30,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowSpecificOrigins", builder =>
     {
         builder
-        .WithOrigins("http://localhost:3000",
-        "https://dealmatedevelopment-ui-gbfpfxeyh4eqhxgr.eastasia-01.azurewebsites.net") // Replace with your client application's URL
+        .AllowAnyOrigin()
         .AllowAnyHeader()
         .AllowAnyMethod()
         .AllowCredentials(); // Allow credentials
