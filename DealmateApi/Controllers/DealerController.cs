@@ -1,6 +1,5 @@
 ﻿using DealmateApi.Domain.Aggregates;
 using DealmateApi.Infrastructure.Interfaces;
-using DealmateApi.Infrastructure.Repositories;
 using DealmateApi.Service.Common;
 using Microsoft.AspNetCore.Mvc;
 
@@ -48,11 +47,5 @@ namespace DealmateApi.Controllers
             return Ok(await dealerRepository.Delete(id));
         }
 
-
-        [HttpPost]
-        public async Task<IActionResult> FileUpload(IFormFile file)
-        {
-            return Ok(await dealerRepository.ExcelUpload(file));
-        }
     }
 }

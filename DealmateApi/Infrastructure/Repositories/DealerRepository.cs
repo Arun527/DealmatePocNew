@@ -1,20 +1,15 @@
 ﻿using DealmateApi.Domain.Aggregates;
 using DealmateApi.Infrastructure.Interfaces;
 using DealmateApi.Service.Common;
-using DealmateApi.Service.ExcelProcess;
-using DealmateApi.Service.Exceptions;
 
 namespace DealmateApi.Infrastructure.Repositories;
 
 public class DealerRepository : IDealerRepository
 {
     private readonly IRepository<Dealer> repository;
-    private readonly IExcelService excelService;
-
-    public DealerRepository(IRepository<Dealer> repository, IExcelService excelService)
+    public DealerRepository(IRepository<Dealer> repository)
     {
         this.repository = repository;
-        this.excelService = excelService;
     }
 
     public async Task<Dealer> Create(Dealer dealer)
@@ -50,12 +45,5 @@ public class DealerRepository : IDealerRepository
         }
         dealer = await repository.Remove(dealer);
         return dealer;
-    }
-
-    public async Task<IEnumerable<Dealer>> ExcelUpload(IFormFile file)
-    {
-        var dealerList = excelService.DealerProcess(file);
-        return await repository.InsertDealersBulkAsync(dealerList);
-
     }
 }

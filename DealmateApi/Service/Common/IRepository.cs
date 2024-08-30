@@ -10,7 +10,6 @@ public interface IRepository<T> where T : class
     Task<IEnumerable<T>> AddRangeAsync(IEnumerable<T> entities);
     Task<IEnumerable<T>> RemoveRange(IEnumerable<T> entities);
     Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate);
-    Task InsertDealersBulkAsync(List<T> dealers);
 
     #region API Methods
     Task<T?> GetAsync(int id);

@@ -5,6 +5,4 @@ namespace DealmateApi.Service.ExcelProcess;
 public interface IExcelService
 {
     List<Vehicle> VehicleProcess(IFormFile file);
-
-    List<Dealer> DealerProcess(IFormFile file);
 }

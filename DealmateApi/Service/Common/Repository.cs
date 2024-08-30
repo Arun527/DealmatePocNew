@@ -1,6 +1,5 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
-using DealmateApi.Domain.Aggregates;
 using DealmateApi.Infrastructure.DB;
 using DealmateApi.Service.Enforcer;
 using Microsoft.EntityFrameworkCore;
@@ -25,21 +24,7 @@ public class Repository<T> : IRepository<T> where T : class
             _query = _query.Include(includeProperty);
         }
     }
-
-    public async Task InsertDealersBulkAsync(List<T> dealers)
-    {
-        // Convert list of dealers to JSON
-        var dealersJson = JsonConvert.SerializeObject(dealers);
-
-        // Create parameter for stored procedure
-        var parameter = new NpgsqlParameter("dealer_data", dealersJson);
-
-        var s = await Database.ExecuteSqlRawAsync("CALL create_dealer_bulk(@dealer_data);", parameter);
-
-        // Execute stored procedure
-
-    }
-
+    
     public async Task<T?> GetByIdAsync(int id)
     {
         return await _query.FirstOrDefaultAsync(e => EF.Property<int>(e, "Id") == id);
