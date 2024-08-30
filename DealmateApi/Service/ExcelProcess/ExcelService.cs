@@ -15,6 +15,33 @@ public class ExcelService : IExcelService
         _httpContextAccessor = httpContextAccessor;
     }
 
+    public List<Dealer> DealerProcess(IFormFile file)
+    {
+        using var memoryStream = new MemoryStream();
+        file.CopyTo(memoryStream);
+        memoryStream.Position = 0;
+        var list = new List<Dealer>();
+
+        if (fileExtension == ".xlsx")
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            using var package = new ExcelPackage(memoryStream);
+            var worksheet = package.Workbook.Worksheets[0];
+            var rowCount = worksheet.Dimension?.Rows ?? 0;
+
+            var columnMapping = rowCount > 2 ? new Dictionary<string, int>()
+                : throw new InvalidOperationException("No data found in the worksheet.");
+
+            var headerRow = worksheet.Cells[1, 1, 1, worksheet.Dimension!.Columns];
+
+            GetCoumnMapping(1, worksheet.Dimension.Columns, columnMapping, worksheet: headerRow);
+            list = DealersList(columnMapping, 2, rowCount, worksheet: worksheet);
+        }
+
+        return list;
+    }
+
+
     public List<Vehicle> VehicleProcess(IFormFile file)
     {
 
@@ -205,5 +232,29 @@ public class ExcelService : IExcelService
                 csvData[rowIndex - 1][columnMapping[columnName] - 1];
         }
     }
+
+  
+    private static List<Dealer> DealersList(Dictionary<string, int> columnMapping, int rowIndex, int rowCount,
+       ExcelWorksheet worksheet)
+    {
+        var dealers = new List<Dealer>();
+        for (int i = rowIndex; i <= rowCount; i++)
+        {
+            rowIndex = i;
+            dealers.Add(new Dealer
+            {
+                Name = GetCellValue("name"),
+                Address = GetCellValue("address")
+            });
+        }
+        return dealers;
+
+        string? GetCellValue(string columnName)
+        {
+            string cellText = worksheet.Cells[rowIndex, columnMapping[columnName]].Text;
+            return string.IsNullOrWhiteSpace(cellText) ? null : cellText;
+        }
+    }
+
 
 }
