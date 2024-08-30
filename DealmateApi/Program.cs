@@ -1,5 +1,6 @@
 using DealmateApi.Infrastructure;
 using DealmateApi.Infrastructure.DB;
+using DealmateApi.Service.Hubs;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -40,6 +41,7 @@ builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 builder.Logging.AddAzureWebAppDiagnostics();
+builder.Services.AddSignalR();
 
 builder.Services.InfrastructureServices(builder.Configuration);
 
@@ -56,6 +58,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<ConnectionHub>("/connectionHub");
 
 // Handle fallback for SPA routes
 app.MapFallbackToFile("index.html");

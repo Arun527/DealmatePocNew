@@ -3,8 +3,10 @@ using DealmateApi.Infrastructure.Interfaces;
 using DealmateApi.Service.Common;
 using DealmateApi.Service.ExcelProcess;
 using DealmateApi.Service.Exceptions;
+using DealmateApi.Service.Hubs;
 using DealmateApi.Service.Repository;
 using FluentValidation;
+using Microsoft.AspNetCore.SignalR;
 
 namespace DealmateApi.Infrastructure.Repositories;
 
@@ -13,12 +15,15 @@ public class VehicleRepository : IVehicleRepository
     private readonly IRepository<Vehicle> readRepository;
     private readonly IWriteRepository<Vehicle> writeRepository;
     private readonly IExcelService excelService;
+    private readonly IHubContext<ConnectionHub> _hubContext;
 
-    public VehicleRepository(IRepository<Vehicle> readRepository, IWriteRepository<Vehicle> writeRepository, IExcelService excelService)
+    public VehicleRepository(IRepository<Vehicle> readRepository, IWriteRepository<Vehicle> writeRepository,
+        IExcelService excelService, IHubContext<ConnectionHub> hubContext)
     {
         this.readRepository = readRepository;
         this.writeRepository = writeRepository;
         this.excelService = excelService;
+        this._hubContext = hubContext;
     }
 
     public async Task<IEnumerable<Vehicle>> ExcelUpload(IFormFile file)
@@ -58,6 +63,7 @@ public class VehicleRepository : IVehicleRepository
         existvehicle.ManualBook = vehicle.ManualBook;
         existvehicle.Active = vehicle.Active;
         existvehicle = await writeRepository.Update(existvehicle);
+        await _hubContext.Clients.All.SendAsync("VehicleUpdated", existvehicle);
         return existvehicle;
     }
 
