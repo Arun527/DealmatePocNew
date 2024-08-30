@@ -30,9 +30,11 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowSpecificOrigins", builder =>
     {
         builder
-        .AllowAnyOrigin()
+        .WithOrigins("http://localhost:3000",
+        "https://dealmatedevelopment-ui-gbfpfxeyh4eqhxgr.eastasia-01.azurewebsites.net") // Replace with your client application's URL
         .AllowAnyHeader()
-        .AllowAnyMethod();
+        .AllowAnyMethod()
+        .AllowCredentials(); // Allow credentials
     });
 });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
